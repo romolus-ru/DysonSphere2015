@@ -44,4 +44,4 @@ Temporary Items
 *.pdb
 /files/
 obj/
-*.vshost.ex*
+*.vshost.*
