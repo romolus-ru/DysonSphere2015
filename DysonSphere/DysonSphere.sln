@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Engine", "Engine\Engine.csproj", "{5C9FF908-3D9D-4B5D-B601-A6B1B47969C9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SettingsEditor", "SettingsEditor\SettingsEditor.csproj", "{69D8C486-5E7E-48DA-B4BA-7542C3129CA5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualizationOpenGL4", "VisualizationOpenGL4\VisualizationOpenGL4.csproj", "{FB3A11C6-3F46-444D-B2AC-D99D36CB415A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZChatTest", "ZChatTest\ZChatTest.csproj", "{BFDB1BC2-9A14-4899-98C7-F30FC8CF7E02}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PathTester", "PathTester\PathTester.csproj", "{B566FDA8-2A05-48A1-851D-79BBC2B81E7C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleMapEditor", "SimpleMapEditor\SimpleMapEditor.csproj", "{5C7A3116-5ED7-4223-9F5B-9ADEA81D5233}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5C9FF908-3D9D-4B5D-B601-A6B1B47969C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C9FF908-3D9D-4B5D-B601-A6B1B47969C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C9FF908-3D9D-4B5D-B601-A6B1B47969C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C9FF908-3D9D-4B5D-B601-A6B1B47969C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69D8C486-5E7E-48DA-B4BA-7542C3129CA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69D8C486-5E7E-48DA-B4BA-7542C3129CA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69D8C486-5E7E-48DA-B4BA-7542C3129CA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69D8C486-5E7E-48DA-B4BA-7542C3129CA5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB3A11C6-3F46-444D-B2AC-D99D36CB415A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB3A11C6-3F46-444D-B2AC-D99D36CB415A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB3A11C6-3F46-444D-B2AC-D99D36CB415A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB3A11C6-3F46-444D-B2AC-D99D36CB415A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFDB1BC2-9A14-4899-98C7-F30FC8CF7E02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFDB1BC2-9A14-4899-98C7-F30FC8CF7E02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFDB1BC2-9A14-4899-98C7-F30FC8CF7E02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFDB1BC2-9A14-4899-98C7-F30FC8CF7E02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B566FDA8-2A05-48A1-851D-79BBC2B81E7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B566FDA8-2A05-48A1-851D-79BBC2B81E7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B566FDA8-2A05-48A1-851D-79BBC2B81E7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B566FDA8-2A05-48A1-851D-79BBC2B81E7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C7A3116-5ED7-4223-9F5B-9ADEA81D5233}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C7A3116-5ED7-4223-9F5B-9ADEA81D5233}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C7A3116-5ED7-4223-9F5B-9ADEA81D5233}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C7A3116-5ED7-4223-9F5B-9ADEA81D5233}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

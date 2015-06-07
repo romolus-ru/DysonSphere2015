@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfSettingsRow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SettingsRow>
+    <Section>assembly</Section>
+    <Name>Engine.exe</Name>
+    <Value />
+    <Hint>Engine.exe</Hint>
+  </SettingsRow>
+  <SettingsRow>
+    <Section>assembly</Section>
+    <Name>PathTester.dll</Name>
+    <Value />
+    <Hint>PathTester.dll</Hint>
+  </SettingsRow>
+  <SettingsRow>
+    <Section>assembly</Section>
+    <Name>SettingsEditor.exe</Name>
+    <Value />
+    <Hint>SettingsEditor.exe</Hint>
+  </SettingsRow>
+  <SettingsRow>
+    <Section>assembly</Section>
+    <Name>SimpleMapEditor.dll</Name>
+    <Value />
+    <Hint>SimpleMapEditor.dll</Hint>
+  </SettingsRow>
+  <SettingsRow>
+    <Section>assembly</Section>
+    <Name>VisualizationDefault.dll</Name>
+    <Value />
+    <Hint>VisualizationDefault.dll</Hint>
+  </SettingsRow>
+  <SettingsRow>
+    <Section>assembly</Section>
+    <Name>VisualizationOpenGL4.dll</Name>
+    <Value />
+    <Hint>VisualizationOpenGL4.dll</Hint>
+  </SettingsRow>
+  <SettingsRow>
+    <Section>assembly</Section>
+    <Name>ZChatTest.dll</Name>
+    <Value />
+    <Hint>ZChatTest.dll</Hint>
+  </SettingsRow>
+  <SettingsRow>
+    <Section>Default</Section>
+    <Name>Input</Name>
+    <Value>VisualizationOpenGL4.OpenGLInput</Value>
+    <Hint />
+  </SettingsRow>
+  <SettingsRow>
+    <Section>Default</Section>
+    <Name>Module</Name>
+    <Value>ZChatTest.ChatTest</Value>
+    <Hint />
+  </SettingsRow>
+  <SettingsRow>
+    <Section>Default</Section>
+    <Name>Visualization</Name>
+    <Value>VisualizationOpenGL4.VisualizationOpenGL4</Value>
+    <Hint />
+  </SettingsRow>
+  <SettingsRow>
+    <Section>Default</Section>
+    <Name>VisualizationServer</Name>
+    <Value />
+    <Hint />
+  </SettingsRow>
+  <SettingsRow>
+    <Section>MainSettings</Section>
+    <Name>settingsFile</Name>
+    <Value>settings.xml</Value>
+    <Hint>Местоположение файла настроек</Hint>
+  </SettingsRow>
+  <SettingsRow>
+    <Section>WindowOptions</Section>
+    <Name>windowHeight</Name>
+    <Value>768</Value>
+    <Hint>Высота окна</Hint>
+  </SettingsRow>
+  <SettingsRow>
+    <Section>WindowOptions</Section>
+    <Name>windowWidth</Name>
+    <Value>1024</Value>
+    <Hint>Ширина окна</Hint>
+  </SettingsRow>
+</ArrayOfSettingsRow>
