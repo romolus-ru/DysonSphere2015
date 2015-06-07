@@ -205,13 +205,14 @@ namespace Engine.Utils.Settings
 				settings.AddValue("assembly", "Engine.exe", "", "Engine.exe");
 				//settings.AddValue("assembly", "PathTester.dll", "", "PathTester.dll");
 				settings.AddValue("assembly", "SettingsEditor.exe", "", "SettingsEditor.exe");
+				settings.AddValue("assembly", "ZChatTest.dll", "", "ZChatTest.dll");
 				//settings.AddValue("assembly", "SimpleMapEditor.dll", "", "SimpleMapEditor.dll");
 				//settings.AddValue("assembly", "VisualizationDefault.dll", "", "VisualizationDefault.dll");
 				settings.AddValue("assembly", "VisualizationOpenGL4.dll", "", "VisualizationOpenGL4.dll");
 				settings.AddValue("Default", "Input", "VisualizationOpenGL4.OpenGLInput", "");
 				settings.AddValue("Default", "Module", "ZChatTest.ChatTest", "");
 				settings.AddValue("Default", "Visualization", "VisualizationOpenGL4.VisualizationOpenGL4", "");
-				settings.AddValue("Default", "address", "192.168.146.1", "address");
+				settings.AddValue("Default", "address", "127.0.0.1", "address");
 				settings.AddValue("Default", "port", "1991", "port");
 				settings.AddValue("WindowOptions", "windowHeight", "768", "Высота окна");
 				settings.AddValue("WindowOptions", "windowWidth", "1024", "Ширина окна");

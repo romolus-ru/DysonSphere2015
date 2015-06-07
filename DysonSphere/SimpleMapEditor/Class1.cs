@@ -13,7 +13,7 @@ namespace SimpleMapEditor
 {
 	class SimpleMapEditor : Module
 	{
-		private View _view;
+/*		private View _view;
 		private Editor _editor;
 		//private viewObjectFullView _voFullView;
 		//private Boolean _newObjClick;
@@ -175,5 +175,6 @@ namespace SimpleMapEditor
 			_editor.Save("_a1.arch");
 		}
 
+ */
 	}
 }

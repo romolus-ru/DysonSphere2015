@@ -107,7 +107,7 @@
     <Compile Include="Utils\Path\PathGenerator.cs" />
     <Compile Include="Utils\Path\Point.cs" />
     <Compile Include="Utils\Settings\Settings.cs" />
-    <Compile Include="Utils\Settings\SettingsRoq.cs" />
+    <Compile Include="Utils\Settings\SettingsRow.cs" />
     <Compile Include="Utils\StateOne.cs" />
     <Compile Include="Utils\StateOneTime.cs" />
     <Compile Include="Utils\StatesEnum.cs" />
