@@ -8,9 +8,27 @@
   </SettingsRow>
   <SettingsRow>
     <Section>assembly</Section>
+    <Name>PathTester.dll</Name>
+    <Value />
+    <Hint>PathTester.dll</Hint>
+  </SettingsRow>
+  <SettingsRow>
+    <Section>assembly</Section>
     <Name>SettingsEditor.exe</Name>
     <Value />
     <Hint>SettingsEditor.exe</Hint>
+  </SettingsRow>
+  <SettingsRow>
+    <Section>assembly</Section>
+    <Name>SimpleMapEditor.dll</Name>
+    <Value />
+    <Hint>SimpleMapEditor.dll</Hint>
+  </SettingsRow>
+  <SettingsRow>
+    <Section>assembly</Section>
+    <Name>VisualizationOpenGL4.dll</Name>
+    <Value />
+    <Hint>VisualizationOpenGL4.dll</Hint>
   </SettingsRow>
   <SettingsRow>
     <Section>assembly</Section>
@@ -19,10 +37,10 @@
     <Hint>ZChatTest.dll</Hint>
   </SettingsRow>
   <SettingsRow>
-    <Section>assembly</Section>
-    <Name>VisualizationOpenGL4.dll</Name>
-    <Value />
-    <Hint>VisualizationOpenGL4.dll</Hint>
+    <Section>Default</Section>
+    <Name>address</Name>
+    <Value>127.0.0.1</Value>
+    <Hint>address</Hint>
   </SettingsRow>
   <SettingsRow>
     <Section>Default</Section>
@@ -33,26 +51,20 @@
   <SettingsRow>
     <Section>Default</Section>
     <Name>Module</Name>
-    <Value>ZChatTest.ChatTest</Value>
+    <Value>SimpleMapEditor.SimpleMapEditor</Value>
     <Hint />
-  </SettingsRow>
-  <SettingsRow>
-    <Section>Default</Section>
-    <Name>Visualization</Name>
-    <Value>VisualizationOpenGL4.VisualizationOpenGL4</Value>
-    <Hint />
-  </SettingsRow>
-  <SettingsRow>
-    <Section>Default</Section>
-    <Name>address</Name>
-    <Value>127.0.0.1</Value>
-    <Hint>address</Hint>
   </SettingsRow>
   <SettingsRow>
     <Section>Default</Section>
     <Name>port</Name>
     <Value>1991</Value>
     <Hint>port</Hint>
+  </SettingsRow>
+  <SettingsRow>
+    <Section>Default</Section>
+    <Name>Visualization</Name>
+    <Value>VisualizationOpenGL4.VisualizationOpenGL4</Value>
+    <Hint />
   </SettingsRow>
   <SettingsRow>
     <Section>WindowOptions</Section>

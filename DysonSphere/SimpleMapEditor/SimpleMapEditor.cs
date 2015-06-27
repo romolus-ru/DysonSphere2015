@@ -6,14 +6,16 @@ using Engine.Controllers;
 using Engine.Controllers.Events;
 using Engine.Utils.Editor;
 using Engine.Views;
+using Engine.Views.Debug;
 using Button = Engine.Views.Templates.Button;
+using TrackBar = Engine.Views.Templates.TrackBar;
 using View = Engine.Views.View;
 
 namespace SimpleMapEditor
 {
 	class SimpleMapEditor : Module
 	{
-/*		private View _view;
+		private View _view;
 		private Editor _editor;
 		//private viewObjectFullView _voFullView;
 		//private Boolean _newObjClick;
@@ -27,23 +29,29 @@ namespace SimpleMapEditor
 		private ViewModalSelectFile selectFile;
 		private ViewModalInputName InputString;
 		private ShowMsg ShowMsg;
+		private TrackBar _t;
+		private WindowControlsView _wcv1;
 
 		protected override void SetUpView(Engine.Views.View view, Controller controller)
 		{
 			_view = view;// сохраняем
+			CreateEditor();
 			var b1 = Button.CreateButton(controller, 950, 0, 74, 20, "systemExit", "Выход", "Esc", Keys.Escape, "");
-			_view.AddComponent(b1);
-
+			_view.AddObject(b1);
+			
 			_view.AddObject(Button.CreateButton(controller, 900, 720, 100, 20, "SimpleSave", "Сохранить", "S", Keys.S, ""));
 			_view.AddObject(Button.CreateButton(controller, 800, 720, 100, 20, "SimpleLoad", "Загрузить", "L", Keys.L, ""));
 			_view.AddObject(Button.CreateButton(controller, 900, 25, 130, 20, "MapView", "Смена слоя", "Активировать другой слой редактора", Keys.M, ""));
 			_view.AddObject(Button.CreateButton(controller, 950, 55, 74, 20, "ModalStart", "Modal", "Модальный запрос", Keys.H, ""));
 			_view.AddObject(Button.CreateButton(controller, 900, 85, 130, 20, "ModalInput", "ModalInput", "Ввод текста", Keys.I, "modalInput"));
-
-			CreateEditor();
+			
 			var s = new SimpleEditableObject();
 			s.X = 32;
 			s.Y = 64;
+			_editor.AddNewObject(s);
+			s = new SimpleEditableObject();
+			s.X = 32*2;
+			s.Y = 64*2;
 			_editor.AddNewObject(s);
 
 			Controller.AddEventHandler("SimpleSave", Save);
@@ -57,7 +65,16 @@ namespace SimpleMapEditor
 			Controller.AddEventHandler("ModalInputResult", ModalInputResult);
 			Controller.AddEventHandler("ModalInputDestroy", ModalInputDestroy);
 			
-			ShowMsg = new ShowMsg(controller, sys);
+			ShowMsg = new ShowMsg(controller);
+			
+			_t = new TrackBar(controller);
+			_t.SetParams(200, 400, 600, 40, "TrackBar1");
+			_view.AddObject(_t);
+			_t.BringToFront();
+			//_editor.Hide();
+			_wcv1 = new WindowControlsView(Controller, _view);
+			_wcv1.SetParams(500,200,300,500,"DebugW");_wcv1.SetHeader(20,2,100,17);_view.AddObject(_wcv1);
+			_wcv1.BringToFront();
 		}
 
 		private void ModalResult(object sender, EventArgs e)
@@ -78,29 +95,30 @@ namespace SimpleMapEditor
 
 		private void ModalStart(object sender, EventArgs e)
 		{
-			selectFile = new ViewModalSelectFile(Controller, null, "ModalClosed", "ModalDestroy");
+			selectFile = new ViewModalSelectFile(Controller, "ModalClosed");
 			_view.AddObject(selectFile);
 		}
 
 		private void ModalInputResult(object sender, EventArgs e)
 		{
 			var m = sender as ViewModalInput;
-			if (m != null)
-			{
+			if (m != null){
 				var s = m.GetResult();
 			}
-		}
-
-		private void ModalInputDestroy(object sender, EventArgs e)
-		{
 			_view.DeleteObject(InputString);
 			InputString.Dispose();
 			InputString = null;
 		}
 
+		private void ModalInputDestroy(object sender, EventArgs e)
+		{
+
+		}
+
 		private void ModalInput(object sender, EventArgs e)
 		{
-			InputString = new ViewModalInputName(Controller, null, "ModalInputClosed", "ModalInputDestroy", "строка");
+			//InputString = new ViewModalInputName(Controller, null, "ModalInputClosed", "ModalInputDestroy", "строка");
+			InputString = new ViewModalInputName(Controller, "ModalInputDestroy", "строка");
 			InputString.SetSize(300, 50);
 			InputString.SetCoordinates(100, 100, 0);
 			_view.AddObject(InputString);
@@ -140,18 +158,16 @@ namespace SimpleMapEditor
 		/// </summary>
 		private void CreateEditor()
 		{
-			// потом всё равно надо будет продумать систему для удаления обработчиков и слоёв. так что решение временное
-			// и лучше к нему вернуться побыстрее
-			// TODO переделать что бы была возможность удалить объект
-			if (_editor == null)
-			{// если редактор ещё не инициирован, то создаём его и всё такое
-				_editor = new editor(Controller, sys);
+			if (_editor == null){// если редактор ещё не инициирован, то создаём его и всё такое
+				_editor = new Editor(Controller);
 				_editor.Show();
-				l1 = new LayerSimpleEditableObject(Controller, "objects", data, _editor);
-				l2 = new LayerSimpleEditableObjectView(Controller, "objectsView", data, _editor);
-				l3 = new LayerSimpleEditableObjectMove(Controller, "objectsMove", data, _editor);
-				l4 = new LayerSimpleEditableObjectTeleport(Controller, "objectsTeleport", data, _editor);
-				l9 = new LayerSimpleEditableObjectMap(Controller, "Map", data, _editor);
+				_view.AddObject(_editor);
+				// TODO слои надо будет переделать, пока не знаю как. они должны полностью наследовать viewdrag и нормально его обрабатывать
+				l1 = new LayerSimpleEditableObject(Controller, "objects", data);
+				l2 = new LayerSimpleEditableObjectView(Controller, "objectsView", data);
+				l3 = new LayerSimpleEditableObjectMove(Controller, "objectsMove", data);
+				l4 = new LayerSimpleEditableObjectTeleport(Controller, "objectsTeleport", data);
+				l9 = new LayerSimpleEditableObjectMap(Controller, "Map", data);
 				_editor.AddNewLayer(l1);
 				_editor.AddNewLayer(l2);
 				_editor.AddNewLayer(l3);
@@ -175,6 +191,5 @@ namespace SimpleMapEditor
 			_editor.Save("_a1.arch");
 		}
 
- */
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Engine.Controllers;
 using Engine.Controllers.Events;
 
@@ -47,6 +48,9 @@ namespace Engine.Views
 		{
 			var a = e as ViewControlEventArgs;
 			if (a == null) return;
+			if ((_modalObject != null)/*&&(a.ViewControl!=_modalObject)*/){//var o = _modalObject as ViewDraggable;if (o!=null)o.DragCancel();
+				return;}
+			a.Result = true;
 			_modalObject = a.ViewControl;
 		}
 
@@ -60,14 +64,16 @@ namespace Engine.Views
 		public override void CursorEH(object o, PointEventArgs args)
 		{
 			// если модальный объект задан то событие идёт только непосредственно ему
-			if (_modalObject == null) { base.CursorEH(o, args); return; }
-			_modalObject.CursorEH(o, args);
+			if (_modalObject == null)  
+				base.CursorEH(o, args);
+			else _modalObject.CursorEH(o, args);
 		}
 
 		public override void KeyboardEH(object o, InputEventArgs args)
 		{
-			if (_modalObject == null) { base.KeyboardEH(o, args); return; }
-			_modalObject.KeyboardEH(o, args);
+			if (_modalObject == null)  
+				base.KeyboardEH(o, args);
+			else _modalObject.KeyboardEH(o, args);
 		}
 
 		protected override void DrawComponents(VisualizationProvider visualizationProvider)
@@ -75,12 +81,16 @@ namespace Engine.Views
 			if (_modalObject != null) _modalObject.Hide();
 			base.DrawComponents(visualizationProvider);
 			// прорисованы все объекты, кроме объекта, объявленного модальным
-			if (_modalObject != null)
-			{
+			if (_modalObject != null){
 				_modalObject.Show();// не очень хорошо - 2 проверки идут, + скрываем показываем объект
 				// но цель будет достигнута - объект будет скрыт, выведутся все остальные объекты, а потом выведется модальный объект
 				_modalObject.Draw(visualizationProvider);
 			}
+		}
+
+		public ViewControl GetModalObject()
+		{
+			return _modalObject;
 		}
 
 	}

@@ -56,5 +56,6 @@ namespace Engine.Utils.Editor
 		/// <param name="data"></param>
 		void Load(MemoryStream data);
 
+		void Draw(VisualizationProvider visualizationProvider);
 	}
 }

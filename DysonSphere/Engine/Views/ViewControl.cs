@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 using Engine.Controllers;
 using Engine.Controllers.Events;
+using Engine.Utils.Path;
 
 namespace Engine.Views
 {
@@ -12,6 +14,11 @@ namespace Engine.Views
 	{
 		#region Основные переменные
 
+		public ViewControl Parent { get; protected set; }
+
+		/// <summary>
+		/// Сохранённая ссылка на контроллер
+		/// </summary>
 		public Controller Controller { get; protected set; }
 		/// <summary>
 		/// Возможно, устарело. имя объекта может пригодится при отладке
@@ -22,12 +29,12 @@ namespace Engine.Views
 		/// <summary>
 		/// Координата X объекта
 		/// </summary>
-		public int X { get; protected set; }
+		public int X{ get; protected set; }
 
 		/// <summary>
 		/// Координата Y объекта
 		/// </summary>
-		public int Y { get; protected set; }
+		public int Y{ get; protected set; }
 
 		/// <summary>
 		/// Координата Z объекта
@@ -153,8 +160,6 @@ namespace Engine.Views
 			foreach (var control in Controls) { control.Show(); }
 		}
 
-
-
 		/// <summary>
 		/// В данном случае надо скрыть и компоненты
 		/// </summary>
@@ -171,6 +176,7 @@ namespace Engine.Views
 		public void AddControl(ViewControl control)
 		{
 			Controls.Add(control);
+			control.Parent = this;
 			control.Show();
 			control.Init(VisualizationProvider);
 		}
@@ -189,22 +195,16 @@ namespace Engine.Views
 		/// <summary>
 		/// Переместить объект на передний план
 		/// </summary>
-		/// <param name="topObject"></param>
-		public void BringToFront(ViewControl topObject)
+		/// <param name="topObject">Если объект не задан то перемещается текущий объект</param>
+		public void BringToFront(ViewControl topObject=null)
 		{
+			if (topObject==null){ Controller.StartEvent("ViewBringToFront", this, EventArgs.Empty);return;}
 			if (Controls.Contains(topObject)){
 				Controls.Remove(topObject);
 				Controls.Insert(0, topObject);
 			}else{
 				foreach (var control in Controls){
 					control.BringToFront(topObject); // каждый компонент который может содержать другие объекты 
-					// это можно улучшить, храня у объекта ссылку на предка
-					// но ссылка на предка может быть использована в корыстных целях
-					// можно ввести вспомогательную переменную, которая после выполнения операции просто завершит вызов всех рекурсивных функций
-					// можно вместо list сделать dictionary что повысит скорость операции
-					// но будем надеяться что жта функция будет вызываться редко поэтому ничего делать не нужно
-					// но как только появится parent - надо переписать, с парентом это проще делается - у родителя вызываем бринг 
-					// и всё. а если у него нету этого объекта значит у объекта неправильный парент прописан, делов то
 				}
 			}
 		}
@@ -212,9 +212,10 @@ namespace Engine.Views
 		/// <summary>
 		/// Переместить объект на задний план
 		/// </summary>
-		/// <param name="topObject"></param>
+		/// <param name="topObject">Если объект не задан то перемещается текущий объект</param>
 		public void SendToBack(ViewControl topObject)
 		{
+			if (topObject==null) { Controller.StartEvent("ViewSendToBack", this, EventArgs.Empty); return; }
 			if (Controls.Contains(topObject)){
 				Controls.Remove(topObject);
 				Controls.Add(topObject);
@@ -225,18 +226,6 @@ namespace Engine.Views
 			}
 		}
 
-		/// <summary>
-		/// Переместить объект на передний план
-		/// </summary>
-		public void BringToFront()
-		{
-			Controller.StartEvent("ViewBringToFront", this, EventArgs.Empty);
-		}
-
-		public void SendToBack()
-		{
-			Controller.StartEvent("ViewSendToBack", this, EventArgs.Empty);
-		}
 
 		#region Cursor
 
@@ -267,7 +256,7 @@ namespace Engine.Views
 			}
 			CursorOver = true;
 			Cursor(o, args);
-			if (Controls != null){
+			if (Controls.Count>0){
 				CursorOverOffed = false;
 				foreach (var control in Controls){
 					control.CursorOver = false;
@@ -312,18 +301,24 @@ namespace Engine.Views
 		protected void KeyboardDeliver(object o, InputEventArgs args)
 		{
 			//if (args == null)return;
-			Keyboard(o, args);
-			if (Controls != null){
+			if (Controls.Count > 0){
 				var controlsLocal = Controls.ToArray(); // что бы небыло ошибки что список компонентов изменен
 				foreach (var control in controlsLocal){
 					if (args.Handled) break; // если событие было обработано - выходим
 					// все объекты получат событие клавиатуры, даже если курсор не над ними
 					// компонент сам должен решить реагировать или нет
 					//if (!component.CursorOver)continue;// курсор не над объектом
+					// пришлось корректировать координаты курсора как для CursorDeliver. в целом может быть в будущем избавиться от курсорного события и всё перенести в клавиатурное
+					// сейчас это нужно, потому что перемещаемые объекты проверяют координаты при нажатии на кнопку
 					if (!control.CanDraw) continue; // компонент скрыт
+					args.AddCorrectionCursor(-X, -Y);
 					control.KeyboardEH(o, args);
+					args.AddCorrectionCursor(X, Y);
 				}
 			}
+			// вызов был в самом начале, но мы сначала спрашиваем подчиненные объекты и если они говорят что обработали сообщение
+			// , то основному объекту событие уже не приходит
+			if (!args.Handled) Keyboard(o, args);
 		}
 
 		/// <summary>
@@ -375,7 +370,7 @@ namespace Engine.Views
 		{
 			// можно проверять на предмет правильного восстановления смещения
 			visualizationProvider.OffsetAdd(X, Y);// смещаем и рисуем компоненты независимо от их настроек
-			// прорисовываем в обратном порядке, от нижких к верхним - наверху находятся те объекты, которые рисуются последними
+			// прорисовываем в обратном порядке, от нижних к верхним - наверху находятся те объекты, которые рисуются последними
 			for (int index = Controls.Count - 1; index >= 0; index--){
 				var control = Controls[index];
 				control.Draw(visualizationProvider);
@@ -468,19 +463,51 @@ namespace Engine.Views
 			Name = name;
 		}
 
-		public void ModalStart()
+		public Boolean ModalStart()
 		{
-			IsModal = true;
-			_isModalStoreCanDraw = CanDraw;// сохраняем состояние, при выводе модального объекта извне оно не обрабатывается, но сильно меняется
-			Controller.StartEvent("ViewSystem.ModalStart", ViewControlEventArgs.Send(this));
+			var args = ViewControlEventArgs.Send(this);
+			Controller.StartEvent("ViewSystem.ModalStart", this, args);
+			if (args.Result){
+				IsModal = true;
+				_isModalStoreCanDraw = CanDraw;// сохраняем состояние, при выводе модального объекта извне оно не обрабатывается, но сильно меняется
+			}
+			return args.Result;
 		}
 
 		public void ModalStop()
 		{
 			IsModal = false;
 			CanDraw = _isModalStoreCanDraw;// восстанавливаем старое состояние, которое было до модального вызова
-			Controller.StartEvent("ViewSystem.ModalStop", ViewControlEventArgs.Send(this));
+			Controller.StartEvent("ViewSystem.ModalStop", this, ViewControlEventArgs.Send(this));
 		}
 
+		/// <summary>
+		/// Отладка. Получить список всех объектов отображения с отступами
+		/// </summary>
+		/// <returns></returns>
+		public List<string> GetObjectsView()
+		{
+			var ret = new List<string>();
+			foreach (var control in Controls){
+				GetObjectsView(ret, control, 1);
+			}
+			return ret;
+		}
+
+		private void GetObjectsView(List<string> list, ViewControl control, int deep)
+		{
+			if (!control.CanDraw) return;
+			list.Add("".PadLeft((deep-1), ' ') + ":" + control.Name+"("+control.GetType().Name+")");
+			foreach (var cntrl in control.Controls){
+				GetObjectsView(list, cntrl, deep + 1);
+			}
+		}
+
+		public void SetParams(int x, int y, int width, int height, string name)
+		{
+			Name = name;
+			SetCoordinates(x,y);
+			SetSize(width, height);
+		}
 	}
 }

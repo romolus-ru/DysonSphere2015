@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using Engine.Controllers;
 using Engine.Controllers.Events;
 using Engine.Views;
@@ -13,13 +12,11 @@ namespace Engine.Utils.Editor
 	/// </summary>
 	/// <remarks>
 	/// Для нормальной работоспособности нужно переопределить записываемые данные, сохраняемые данные в слое и т.п.
+	/// слои являются обхектами класса Layer с интерфейсом ILayer, хранятся в Controls
 	/// </remarks>
 	public class Editor : ViewControl
 	{
-		/// <summary>
-		/// Список слоёв. для централизованного сохранения
-		/// </summary>
-		private List<ILayer<IDataHolder>> _layers = new List<ILayer<IDataHolder>>();
+		//private List<ILayer<IDataHolder>> _layers = new List<ILayer<IDataHolder>>();
 
 		/// <summary>
 		/// Спрятанное поле. все функции работают с текущим слоем, чаще всего
@@ -39,13 +36,21 @@ namespace Engine.Utils.Editor
 
 		private Boolean LayerExists(String layerName) { return (GetLayer(layerName) != null); }
 
-		private ILayer<IDataHolder> GetLayer(String layerName) { return _layers.Find(l => l.LayerName == layerName); }
+		private ILayer<IDataHolder> GetLayer(String layerName) {
+			foreach (var control in Controls){
+				var l = control as ILayer<IDataHolder>;
+				if (l == null) continue;
+				if (l.LayerName == layerName) return l;
+			}
+			return null;
+		}
 
 		public void AddNewLayer(ILayer<IDataHolder> layer)
 		{
 			//одинаковые имена в любом случае противопоказаны
 			if (LayerExists(layer.LayerName)) return;// если такой слой уже создан то выходим
-			_layers.Add(layer);
+			var l = layer as ViewDraggable;
+			AddControl(l);
 		}
 
 		public void SetCurrentLayer(String layerName)
@@ -87,7 +92,9 @@ namespace Engine.Utils.Editor
 		public void Save(string fileName)
 		{
 			var a = new FileArchieve(fileName);
-			foreach (var layer in _layers){
+			foreach (var control in Controls){
+				var layer=control as Layer<IDataHolder>;
+				if (layer == null) continue;
 				if (!layer.CanStore) { continue; }
 				var ms = layer.Save();
 				a.AddStream(layer.LayerName, ms);
@@ -127,7 +134,7 @@ namespace Engine.Utils.Editor
 		/// <param name="visualizationProvider"></param>
 		protected override void DrawComponentBackground(VisualizationProvider visualizationProvider)
 		{
-			visualizationProvider.SetColor(Color.Brown);
+			visualizationProvider.SetColor(Color.PowderBlue);
 			visualizationProvider.Rectangle(X, Y, Width, Height);
 		}
 
@@ -138,39 +145,16 @@ namespace Engine.Utils.Editor
 		/// <remarks>Было на ActiveHandlers но решил убрать это, всё равно основа это видимость слоя. можно будет другой флаг ввести - обработчики тут тоже свои пока</remarks>
 		public void SetActiveLayer(string layerName)
 		{
-			foreach (var layer in _layers){
-				var l = layer as ViewControl;
-				l.Hide();
+			foreach (var control in Controls){
+				var layer = control as ILayer<IDataHolder>;
+				if (layer == null) continue;
+				control.Hide();
 				if (layer.LayerName == layerName){
-					l.Show();
+					control.Show();
 				}
 			}
 			SetCurrentLayer(layerName);
 		}
 
-		protected override void Keyboard(object o, InputEventArgs args)
-		{
-			// обработчики оставил. кнопки и курсор получит только тот слой, который видимый
-			base.Keyboard(o, args);
-			foreach (var layer in _layers){
-				var l = layer as ViewDraggable;
-				if (l != null){
-					if (!l.CanDraw) { continue; }
-					l.KeyboardEH(o, args);
-				}
-			}
-		}
-
-		protected override void Cursor(object o, PointEventArgs args)
-		{
-			base.Cursor(o, args);
-			foreach (var layer in _layers){
-				var l = layer as ViewDraggable;
-				if (l != null){
-					if (!l.CanDraw){continue;}
-					l.CursorEH(o, args);
-				}
-			}
-		}
 	}
 }

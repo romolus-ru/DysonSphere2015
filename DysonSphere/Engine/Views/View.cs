@@ -127,5 +127,19 @@ namespace Engine.Views
 				_visualizationProvider.CopyToTexture(argse.TextureName);
 			}
 		}
+
+		/// <summary>
+		/// Отладка. Получить список всех объектов отображения с отступами
+		/// </summary>
+		/// <returns></returns>
+		public List<string> GetObjectsView()
+		{
+			var ret = _viewMainObjects.GetObjectsView();
+			var o = _viewMainObjects.GetModalObject();
+			var s = "none";
+			if (o != null) s = o.Name + " " + o.GetType().Name;
+			ret.Insert(0, "M " + s);
+			return ret;
+		}
 	}
 }

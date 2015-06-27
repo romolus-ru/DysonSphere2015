@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 
 namespace Engine.Controllers.Events
 {
@@ -33,12 +34,25 @@ namespace Engine.Controllers.Events
 		/// <summary>
 		/// Координата курсора X
 		/// </summary>
-		public int CursorX { get { return Input.CursorX; } }
+		public int CursorX { get { return Input.CursorX+CursorCorrectionX; } }
 
 		/// <summary>
 		/// Координата курсора Y
 		/// </summary>
-		public int CursorY { get { return Input.CursorY; } }
+		public int CursorY { get { return Input.CursorY+CursorCorrectionY; } }
+		
+		public int CursorCorrectionX { get; protected set; }
+		public int CursorCorrectionY { get; protected set; }
+		/// <summary>
+		/// Изменить корректировку курсора
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		public void AddCorrectionCursor(int x, int y)
+		{
+			CursorCorrectionX += x;
+			CursorCorrectionY += y;
+		}
 
 		/// <summary>
 		/// Координата курсора Y

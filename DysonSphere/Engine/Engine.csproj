@@ -111,6 +111,11 @@
     <Compile Include="Utils\StateOne.cs" />
     <Compile Include="Utils\StateOneTime.cs" />
     <Compile Include="Utils\StatesEnum.cs" />
+    <Compile Include="Views\Debug\WindowControlsView.cs" />
+    <Compile Include="Views\Templates\DragObject.cs" />
+    <Compile Include="Views\Templates\Panel.cs" />
+    <Compile Include="Views\Templates\TrackBar.cs" />
+    <Compile Include="Views\Templates\WindowSimple.cs" />
     <Compile Include="Views\ViewModalInput.cs" />
     <Compile Include="Views\ViewModal.cs" />
     <Compile Include="Views\IViewObject.cs" />

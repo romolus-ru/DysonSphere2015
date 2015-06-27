@@ -41,7 +41,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="SimpleMapEditor.cs" />
+    <Compile Include="ShowMsg.cs" />
+    <Compile Include="LayerSimpleEditableObjectTeleport.cs" />
+    <Compile Include="LayerSimpleEditableObjectView.cs" />
+    <Compile Include="LayerSimpleEditableObjectMove.cs" />
+    <Compile Include="LayerSimpleEditableObjectMap.cs" />
+    <Compile Include="LayerSimpleEditableObject.cs" />
     <Compile Include="SimpleWindow.cs" />
     <Compile Include="ViewModalInputName.cs" />
     <Compile Include="ViewModalSelectFile.cs" />

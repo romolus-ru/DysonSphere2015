@@ -13,6 +13,7 @@ namespace Engine.Controllers.Events
 	class ViewControlEventArgs : EngineEventArgs
 	{
 		public ViewControl ViewControl;
+		public Boolean Result = false;
 
 		public static ViewControlEventArgs Send(ViewControl viewControl)
 		{

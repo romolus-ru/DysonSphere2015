@@ -228,5 +228,13 @@ namespace Engine.Utils.Editor
 		/// <param name="visualizationProvider"></param>
 		protected override void DrawComponentBackground(VisualizationProvider visualizationProvider)
 		{ }
+
+		protected override bool InRangeToDrag(int x, int y)
+		{
+			//if (DragStarted)return true;
+			return base.InRange(x, y);// не header, на слое передвигается объект, а не сам слой
+		}
+
+		
 	}
 }

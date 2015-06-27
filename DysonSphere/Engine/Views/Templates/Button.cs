@@ -54,11 +54,13 @@ namespace Engine.Views.Templates
 			// (если нажата кнопка мыши и мышка находится над кнопкой) или (если нажата кнопка на клавиатуре)
 			bool b = e.IsKeyPressed(Keys.LButton);
 			bool b2 = e.IsKeyPressed(Key);
-			var sk = StateOneKeyboard.Check((b && CursorOver) || b2);
+			var clickOnButton = b && CursorOver;
+			var sk = StateOneKeyboard.Check(clickOnButton || b2);
 			if (sk == StatesEnum.On){
 				Press();
 			}
-			if (StateOneKeyboard.CurrentState == StatesEnum.On) e.Handled = true;
+			//if (StateOneKeyboard.CurrentState == StatesEnum.On) e.Handled = true;
+			if (clickOnButton) e.Handled = true;
 			base.Keyboard(sender, e);
 		}
 

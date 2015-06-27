@@ -16,14 +16,14 @@ namespace PathTester
 		protected override void SetUpView(Engine.Views.View view, Controller controller)
 		{
 
-			var w1 = new ViewWindowPath(controller);
+			var w1 = new WindowSimple(controller);
 			w1.SetCoordinates(100, 100, 0);
 			w1.SetSize(100, 100);
 			w1.SetHeader(10,10,80,20);
 			w1.SetName("w1");
 			view.AddObject(w1);
 
-			var w2 = new ViewWindowPath(controller);
+			var w2 = new WindowSimple(controller);
 			w2.SetCoordinates(300, 100, 0);
 			w2.SetSize(100, 100);
 			w2.SetHeader(10, 10, 80, 20);

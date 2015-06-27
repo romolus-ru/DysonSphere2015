@@ -44,7 +44,6 @@
     <Compile Include="PathTesterModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewPath.cs" />
-    <Compile Include="ViewWindowPath.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\Engine.csproj">

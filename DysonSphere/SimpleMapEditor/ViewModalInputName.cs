@@ -34,6 +34,7 @@ namespace SimpleMapEditor
 			base.InitObject(visualizationProvider);
 			EscButton = Button.CreateButton(Controller, -280, -10, -100, -20, OutEvent, "Закрыть", "Закрыть", Keys.None, "");
 			AddControl(EscButton);
+			BringToFront();
 		}
 
 		/// <summary>
