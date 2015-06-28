@@ -179,9 +179,25 @@ namespace VisualizationOpenGL4
 			gl.End();
 		}
 
+		protected override void _Quad(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
+		{
+			gl.Disable(GL.BLEND);
+			gl.Enable(GL.LINE_SMOOTH);
+			gl.Disable(GL.TEXTURE_2D); // Turn off textures
+			gl.Enable(GL.BLEND);
+			gl.BlendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
+
+			gl.Begin(GL.QUADS);
+			gl.Vertex2f(x1, y1);
+			gl.Vertex2f(x2, y2);
+			gl.Vertex2f(x3, y3);
+			gl.Vertex2f(x4, y4);
+			gl.End();
+		}
+
 		private int num_segments = 36;
 
-		public override void Circle(int cx, int cy, int radius)
+		protected override void _Circle(int cx, int cy, int radius)
 		{
 			double theta = 2 * Math.PI / num_segments;
 			double tangetialFactor = Math.Tan(theta);//calculate the tangential factor 

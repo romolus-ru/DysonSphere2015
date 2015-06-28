@@ -8,6 +8,12 @@
   </SettingsRow>
   <SettingsRow>
     <Section>assembly</Section>
+    <Name>GalaxyArmy.dll</Name>
+    <Value />
+    <Hint>GalaxyArmy.dll</Hint>
+  </SettingsRow>
+  <SettingsRow>
+    <Section>assembly</Section>
     <Name>PathTester.dll</Name>
     <Value />
     <Hint>PathTester.dll</Hint>
@@ -51,7 +57,7 @@
   <SettingsRow>
     <Section>Default</Section>
     <Name>Module</Name>
-    <Value>SimpleMapEditor.SimpleMapEditor</Value>
+    <Value>GalaxyArmy.GalaxyArmy</Value>
     <Hint />
   </SettingsRow>
   <SettingsRow>

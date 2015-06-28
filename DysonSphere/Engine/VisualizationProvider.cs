@@ -93,6 +93,7 @@ namespace Engine
 		}
 
 
+
 		#region Установка цвета
 
 		/// <summary>
@@ -162,6 +163,36 @@ namespace Engine
 
 		#region Линия, прямоугольник и круг
 
+
+		public static Dictionary<int, PointF> RoundPoints = InitPoints();
+
+		public static Dictionary<int, PointF> InitPoints()
+		{
+			var ret = new Dictionary<int, PointF>();
+			int radius = 1;
+
+			int num_segments = 360;
+			double theta = 2 * Math.PI / num_segments;
+			double tangetialFactor = Math.Tan(theta);
+			double radialFactor = Math.Cos(theta);
+			double xa = 0;
+			double ya = -radius;
+			ret.Add(0, new PointF((float)xa, (float)ya));
+
+			for (int ii = 0; ii < num_segments; ii++)
+			{
+				double tx = -ya;
+				double ty = xa;
+				xa += tx * tangetialFactor;
+				ya += ty * tangetialFactor;
+				xa *= radialFactor;
+				ya *= radialFactor;
+				ret.Add(ii + 1, new PointF((float)xa, (float)ya));
+			}
+			return ret;
+		}
+
+
 		/// <summary>
 		/// Рисовать линию
 		/// </summary>
@@ -220,6 +251,79 @@ namespace Engine
 		{ _Circle(x + curOffsetX, y + curOffsetY, radius); }
 
 		protected virtual void _Circle(int x, int y, int radius) { }
+
+		/// <summary>
+		/// Полигон по 4м точкам
+		/// </summary>
+		/// <param name="x1"></param>
+		/// <param name="y1"></param>
+		/// <param name="x2"></param>
+		/// <param name="y2"></param>
+		/// <param name="x3"></param>
+		/// <param name="y3"></param>
+		/// <param name="x4"></param>
+		/// <param name="y4"></param>
+		public virtual void Quad(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
+		{
+			_Quad(x1 + curOffsetX, y1 + curOffsetY, x2 + curOffsetX, y2 + curOffsetY, x3 + curOffsetX, y3 + curOffsetY,
+				x4 + curOffsetX, y4 + curOffsetY);
+		}
+
+		protected virtual void _Quad(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4){}
+
+		/// <summary>
+		/// Нарисовать круговой прогресс бар
+		/// </summary>
+		/// <param name="vp"></param>
+		/// <param name="cx"></param>
+		/// <param name="cy"></param>
+		/// <param name="radius"></param>
+		/// <param name="cur"></param>
+		/// <param name="max"></param>
+		public void DrawRound(int cx, int cy, int radius, int cur, int max)
+		{
+			//return;
+			{
+				const int numSegments = 36;
+
+				var curValue = (int) (1f*cur/max*numSegments);
+				var color = Color; // потом этот цвет будет меняться
+				OffsetAdd(cx, cy);
+				for (byte i = 36; i > 0; i--)
+				{
+					var c1 = (curValue - i)*10;
+					if (c1 < 0) c1 += 360;
+					var c2 = c1 - 10;
+					if (c2 < 0) c2 += 360;
+
+					var p1 = RoundPoints[c1];
+					var p2 = RoundPoints[c2];
+					var mx1 = (int) (radius*p1.X);
+					var my1 = (int) (radius*p1.Y);
+					var nx1 = (int) ((radius + 20)*p1.X);
+					var ny1 = (int) ((radius + 20)*p1.Y);
+					var mx2 = (int) (radius*p2.X);
+					var my2 = (int) (radius*p2.Y);
+					var nx2 = (int) ((radius + 20)*p2.X);
+					var ny2 = (int) ((radius + 20)*p2.Y);
+
+					SetColor(color, (byte) (100-i*10/3.6f));
+					Quad(mx1, my1, mx2, my2, nx2, ny2, nx1, ny1);
+				}
+				OffsetRemove();
+			}
+
+			//{const int numSegments = 36;radius += 35;var mx1 = (int) (radius*RoundPoints[0].X + cx);var my1 = (int) (radius*RoundPoints[0].Y + cy);
+			//	var nx1 = (int) ((radius + 20)*RoundPoints[0].X + cx);var ny1 = (int) ((radius + 20)*RoundPoints[0].Y + cy);
+			//	var numSegmentsDraw = (int) (1f*cur/max*numSegments);
+			//	SetColor(Color.Peru);for (var ii = 0; ii < numSegmentsDraw + 1; ii++){
+			//		var i1 = ii*10;if (i1 > 360) i1 -= 360;
+
+			//		var mx2 = (int) (radius*RoundPoints[i1].X + cx);var my2 = (int) (radius*RoundPoints[i1].Y + cy);
+			//		var nx2 = (int) ((radius + 20)*RoundPoints[i1].X + cx);var ny2 = (int) ((radius + 20)*RoundPoints[i1].Y + cy);
+
+			//		Quad(mx1, my1, mx2, my2, nx2, ny2, nx1, ny1);mx1 = mx2;my1 = my2;nx1 = nx2;ny1 = ny2;}}
+		}
 
 		#endregion
 
@@ -482,8 +586,8 @@ namespace Engine
 		{
 			offsets.Push(curOffsetX);
 			offsets.Push(curOffsetY);
-			curOffsetX = dx;
-			curOffsetY = dy;
+			curOffsetX += dx;
+			curOffsetY += dy;
 		}
 
 		/// <summary>

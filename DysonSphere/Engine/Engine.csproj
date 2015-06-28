@@ -102,6 +102,7 @@
     <Compile Include="Utils\ExtensionMethods\Serialization.cs" />
     <Compile Include="Utils\GraphView\GraphicLine.cs" />
     <Compile Include="Utils\GraphView\ViewGraph.cs" />
+    <Compile Include="Utils\MegaInt.cs" />
     <Compile Include="Utils\Path\PathGeneratorBezier.cs" />
     <Compile Include="Utils\Path\Path.cs" />
     <Compile Include="Utils\Path\PathGenerator.cs" />

@@ -29,7 +29,7 @@ namespace Engine.Views.Debug
 
 		protected override void DrawComponentBackground(VisualizationProvider visualizationProvider)
 		{
-			сделать что бы рамка появлялас только при наведении на заголовок
+			// TODO !!!!! сделать что бы рамка появлялась только при наведении на заголовок
 			if (CursorOver) visualizationProvider.SetColor(Color.MediumSeaGreen, 25);
 			else visualizationProvider.SetColor(Color.MediumSeaGreen, 20);
 			visualizationProvider.Box(X, Y, Width, Height);

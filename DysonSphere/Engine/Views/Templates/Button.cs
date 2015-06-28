@@ -41,7 +41,7 @@ namespace Engine.Views.Templates
 		/// <summary>
 		/// Жмём на кнопку
 		/// </summary>
-		public void Press()
+		public virtual void Press()
 		{
 			if (Controller != null){
 				Controller.AddToOperativeStore(_eventName, this, EventArgs.Empty);
@@ -86,9 +86,9 @@ namespace Engine.Views.Templates
 			var f = visualizationProvider.FontHeightGet() / 2;
 
 			visualizationProvider.SetColor(color);
-			visualizationProvider.Rectangle(X, Y, Width, Height);// если текстуры будет то они замаскируют этот прямоугольник
+			visualizationProvider.Rectangle(X, Y, Width, Height);// если текстуры будут то они замаскируют этот прямоугольник
 
-			DrawComponentBackground(visualizationProvider);
+			//DrawComponentBackground(visualizationProvider);// это вызывается другими методами
 
 			visualizationProvider.SetColor(color);
 			visualizationProvider.Print(X + 4, Y + Height / 2 - f - 3, txt);
@@ -135,7 +135,7 @@ namespace Engine.Views.Templates
 			btn.SetCoordinates(x + dx, y + dy, 0);
 			btn.SetSize(width, height);
 			btn.Init(eventName, caption, hint, key); 
-			btn.Name = buttonName;// по умолчанию берётся из caption, может быть приживётся
+			btn.Name = buttonName;
 			return btn;
 		}
 
