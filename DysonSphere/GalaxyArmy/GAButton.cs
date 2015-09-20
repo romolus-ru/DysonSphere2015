@@ -16,10 +16,15 @@ namespace GalaxyArmy
 	class GAButton:MenuButton
 	{
 		/// <summary>
-		/// Делегат для обмена строками
+		/// Делегат
 		/// </summary>
 		public delegate void OnPressDelegate(); 
 		public OnPressDelegate OnPress;
+		
+		/// <summary>
+		/// Состояние кнопки когда нажатие на нее бесполезно, не принесет результата
+		/// </summary>
+		public Boolean CantPress;
 
 		public GAButton(Controller controller) : base(controller)
 		{}
@@ -31,10 +36,14 @@ namespace GalaxyArmy
 
 		protected override void DrawComponentBackground(VisualizationProvider visualizationProvider)
 		{
-			if (CursorOver)	visualizationProvider.SetColor(Color.DodgerBlue);
-			else			visualizationProvider.SetColor(Color.DeepSkyBlue);
+			var color = Color.DeepSkyBlue;
+			if (CantPress) color = Color.White;
+			if (CursorOver) color = Color.DodgerBlue;
+			visualizationProvider.SetColor(color, 40);
+			visualizationProvider.Box(X, Y, Width - 3, Height - 3);
+			if (CantPress) color = Color.DarkRed;
+			visualizationProvider.SetColor(color);
 			visualizationProvider.Rectangle(X, Y, Width, Height);
-			
 		}
 	}
 }

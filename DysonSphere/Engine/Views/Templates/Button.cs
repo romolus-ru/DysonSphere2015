@@ -73,7 +73,7 @@ namespace Engine.Views.Templates
 			Name = caption;
 		}
 
-		protected override void DrawObject(VisualizationProvider visualizationProvider)
+		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
 			visualizationProvider.RotateReset();
 			String txt;
@@ -111,6 +111,11 @@ namespace Engine.Views.Templates
 		public void SetCaption(String newCaption)
 		{
 			Caption = newCaption;
+		}
+
+		public void SetHint(string newHint)
+		{
+			Hint = newHint;
 		}
 
 		/// <summary>

@@ -1,6 +1,7 @@
 ﻿using System.Windows.Forms;
 using Engine;
 using Engine.Controllers;
+using Engine.Utils;
 using Engine.Views.Templates;
 using GalaxyArmy.Model;
 using Button = Engine.Views.Templates.Button;
@@ -26,6 +27,11 @@ namespace GalaxyArmy
 			_scr.Show();
 			view.AddObject(_scr);
 
+			var m = new MegaInt(0, 100);
+			var a = m.Function100(m, "0-100");
+
+			m = new MegaInt(3, 100);
+			a = m.Function100(m,"3-100");
 			//var background = new Background(controller);
 			//view.AddObject(background);
 

@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
+using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Engine.Utils
 {
 	/// <summary>
 	/// Класс для работы с особо большими числами
 	/// </summary>
+	/// <remarks>Возможна сильное погрешность при работе с вещественными числами - там число 
+	/// переводится в дробь, состоящую из числителя и знаменателя, что может сказаться на точности</remarks>
 	public class MegaInt
 	{
 		/// <summary>
@@ -22,8 +22,17 @@ namespace Engine.Utils
 		/// </summary>
 		private Dictionary<int, int> _values = new Dictionary<int, int>();
 
-		public MegaInt(){InitNames();}
-		
+		public MegaInt(){}
+
+		public MegaInt(int power, int value) {AddValue(power,value); }
+
+		public static MegaInt Create(int power, int value)
+		{
+			var a = new MegaInt();
+			a.AddValue(power,value);
+			return a;
+		}
+
 		/// <summary>
 		/// Заполнение имен чисел
 		/// </summary>
@@ -63,6 +72,7 @@ namespace Engine.Utils
 			names.Add(90, "новемвигинтиллион");
 			names.Add(93, "тригинтиллион");
 			names.Add(96, "антригинтиллион");
+			names.Add(99, "*10^99");
 			return names;
 		}
 
@@ -78,44 +88,141 @@ namespace Engine.Utils
 			return a;
 		}
 
-		private void Normalize(out int big, ref int value)
+		/// <summary>
+		/// Получить копию значений
+		/// </summary>
+		/// <returns></returns>
+		private Dictionary<int, int> GetValuesCopy()
 		{
-			big = 0;
-			if (value > 1000){
-				var v = value;
-				value = v % 1000;// остаток от деления на тыщу
-				big = v - value;// отнимаем от первоначального значения остаток - и делим на 1000 - то что передаётся дальше
-				big /= 1000;
+			var ret = new Dictionary<int, int>();
+			foreach (var value in _values){
+				if (value.Value==0)continue;
+				ret.Add(value.Key, value.Value);
 			}
-			if (value < 0){
-				big = value;
-				value = 0;
-			}
+			return ret;
 		}
 
-		public static MegaInt Create(int power, int value)
+		#region Base operations
+
+		/// <summary>
+		/// Сдвигаем число по разрядам вверх, оно не вмещается в отведенную переменную
+		/// </summary>
+		/// <param name="power"></param>
+		/// <param name="shifted"></param>
+		private void Normalize1(int power, int shifted=0)
 		{
-			var a = new MegaInt();
-			a.AddValue(power,value);
-			return a;
+			if (!_values.ContainsKey(power)){_values.Add(power, 0);}
+			var v = _values[power] + shifted;
+			var tmp = v%1000;// остающееся значение
+			int big = (v - tmp)/1000;// передаваемое выше значение
+			_values[power] = tmp;
+			if (big > 0) Normalize1(power + 3, big);
 		}
 
 		/// <summary>
-		/// Прибавляем значение (может быть и отрицательным)
+		/// Прибавляем значение
 		/// </summary>
 		/// <param name="power"></param>
 		/// <param name="value"></param>
+		/// <remarks>Очень полезный метод, поэтому оставлен открытым</remarks>
 		public void AddValue(int power, int value)
 		{
+			if (power % 3 != 0){// если степень не кратная 3, то надо домножить на нужное значение
+				int n = power/3;
+				power = power - n;// корректируем степень, ууменьшая её
+				var k = 10;
+				if (n == 2) k = 100;
+				value *= k;// компенсируем уменьшение степени, увеличивая переданное значение
+			}
+			//if (power%3 != 0) throw new Exception("Степень должна быть кратна трем. полученное значение = " + power);
 			if (power < 0) return;
-			if (!_values.ContainsKey(power)){_values.Add(power, 0);}
-			var v=_values[power];
-			v += value;
-			int big;
-			Normalize(out big, ref v);
+			if (power > 100) return;
+			if (!_values.ContainsKey(power)) { _values.Add(power, 0); }
+			_values[power] += value;
+			Normalize1(power);
+		}
+
+		/// <summary>
+		/// Отнимаем значение
+		/// </summary>
+		/// <param name="power"></param>
+		/// <param name="value"></param>
+		private void MinusValue(int power, int value)
+		{
+			if (power < 0) return;
+			if (power > 100) return;
+			if (!_values.ContainsKey(power)) { _values.Add(power, 0); }
+			var v = _values[power];
+			v -= value;
+			int big = 0;
+			if (v < 0) { big = 1; v += 1000; }// отняли значение и получили меньше 0 значит передаём дальше 1, а текущее значение увеличиваем на тыщу, забирая его из предыдущего (который и отнимаем
 			_values[power] = v;
-			if (big > 0){AddValue(power + 3, big);}
-			if (big < 0){AddValue(power - 3, big);}
+			Normalize1(power);// нормализуем текущее значение
+			// сменил +3 на -3 - надеюсь теперь правильно, иногда возникала непонятная ошибка когда всё становилось заполненным
+			if (big > 0) MinusValue(power - 3, big);// отнимаем дальше
+		}
+
+		/// <summary>
+		/// Умножить на значение
+		/// </summary>
+		/// <param name="power">Текущая умножаемая степень</param>
+		/// <param name="mul">множитель</param>
+		private void MulValue(int power, int mul)
+		{
+			if (mul == 1) return;
+			if (power < 0) return;
+			if (power > 100) return;
+			if (!_values.ContainsKey(power)) return; // нету значения - незачем его создавать
+
+			//var v = _values[power];
+			//var vt = v*mul; // новое значение
+			_values[power] *= mul;
+			Normalize1(power);
+		}
+
+		/// <summary>
+		/// Разделить значение
+		/// </summary>
+		/// <param name="power">Текущая разделяемая степень</param>
+		/// <param name="prevValue">Предыдущее значение</param>
+		/// <param name="div">На сколько делим</param>
+		/// <returns>Значение, которое надо прибавить к предыдущему разряду</returns>
+		/// <remarks></remarks>
+		private int DivValue(int power, int prevValue, int div)
+		{
+			if (div <= 0) return 0;
+			if (power < 0) return 0;
+			if (!_values.ContainsKey(power) && prevValue == 0){
+				return 0;
+			}
+			if (!_values.ContainsKey(power)) _values.Add(power, 0);
+			var v = _values[power] + prevValue;
+			var fl = 1f*v/div;
+			if (fl < 1){
+				_values[power] = 0;// обнуляем значение
+				return v*1000;// передаем дальше значение на которое надо будет умножить разряд для нормального деления
+			}
+			// число получилось больше 1, можно разделить
+			var vt = v / div;// новое значение
+			var vNewBig = v - vt * div;
+			_values[power] = vt;
+			return vNewBig*1000;
+		}
+
+		#endregion
+
+		#region MegaInt operations
+
+		/// <summary>
+		/// Нормализуем число
+		/// </summary>
+		public void Normalize()
+		{
+			var valuesLocal = GetValuesCopy();
+			foreach (var value in valuesLocal){// нормализуем каждое отдельное значение
+				if (value.Value > 1000)
+					Normalize1(value.Key);
+			}
 		}
 
 		/// <summary>
@@ -130,23 +237,6 @@ namespace Engine.Utils
 		}
 
 		/// <summary>
-		/// Отнимаем значение
-		/// </summary>
-		/// <param name="power"></param>
-		/// <param name="value"></param>
-		public void MinusValue(int power, int value)
-		{
-			if (power < 0) return;
-			if (!_values.ContainsKey(power)) { _values.Add(power, 0); }
-			var v = _values[power];
-			v -= value;
-			int big = 0;
-			if (v < 0){big = -1;v += 1000;}// отняли значение и получили меньше 0 значит передаём дальше -1, а текущее значение увеличиваем на тыщу, забирая его из предыдущего (который и отнимаем
-			_values[power] = v;
-			if (big < 0) MinusValue(power + 3, big);// отнимаем дальше
-		}
-
-		/// <summary>
 		/// Отнимаем другое МегаЦелое
 		/// </summary>
 		/// <param name="value"></param>
@@ -158,47 +248,60 @@ namespace Engine.Utils
 			}
 		}
 
-
-
 		/// <summary>
-		/// Умножаем на число
+		/// Умножаем MegaInt на число
 		/// </summary>
 		/// <param name="mul"></param>
 		public void MulValue(int mul)
 		{
-			var mm1 = mul - 1;
-			foreach (var v in _values){
-				AddValue(v.Key,v.Value*(mm1));
+			var max = GetMaxPowerReal();
+			for (int i = max; i >= 0; i -= 3){
+				MulValue(i, mul);
 			}
 		}
 
 		/// <summary>
-		/// Разделить значение
-		/// </summary>
-		/// <param name="power">Текущая разделяемая степень</param>
-		/// <param name="bigv">Остаток от предыдущего порядка</param>
-		/// <param name="div">На сколько делим</param>
-		public void DivValue(int power, int bigv, int div)
-		{
-			if (div<=0)return;
-			if (power < 0) return;
-			if (!_values.ContainsKey(power)) { _values.Add(power, 0); }
-			var v = _values[power];
-			v += bigv*1000;
-			// делим, полученное число умножаем и отнимаем
-			var vt = v/div;// новое значение
-			var vNewBig = v - vt*div;
-			_values[power] = vt;
-			DivValue(power - 3, vNewBig, div);
-		}
-
-		/// <summary>
-		/// Делим на число
+		/// Делим MegaInt на число
 		/// </summary>
 		/// <param name="div"></param>
 		public void DivValue(int div)
 		{
-			DivValue(GetMaxPower(), 0, div);
+			var max = GetMaxPowerReal();
+			var prev = 0;
+			for (int i = max; i >= 0; i-=3){
+				prev = DivValue(i, prev, div);
+			}
+		}
+
+		#endregion
+
+		/// <summary>
+		/// Умножаем на вещественное число
+		/// </summary>
+		/// <param name="mul"></param>
+		public void MulValue(float mul)
+		{
+			if (mul== 1) return;
+			if (mul < 0) return;
+			// узнаем степень
+			if (mul > 1000){// если умножаем на большое число то там мелочи не важны - переводим число в целое и умножаем
+				int mul1 = Convert.ToInt32(mul);
+				MulValue(mul1);
+				return;
+			}
+			int bottomValue = 10000;
+			int topValue = (int)(mul * bottomValue);
+			MulValue(topValue);
+			DivValue(bottomValue);
+		}
+
+		/// <summary>
+		/// Делим на вещественное число
+		/// </summary>
+		/// <param name="div"></param>
+		public void DivValue(float div)
+		{
+			MulValue(1/div);
 		}
 
 		/// <summary>
@@ -227,18 +330,6 @@ namespace Engine.Utils
 			return maxPower;
 		}
 
-		public Boolean IsBiggerThen(MegaInt forCompare)
-		{
-			var a = this.GetMaxPowerReal();
-			var b = forCompare.GetMaxPowerReal();
-			if (a>b)return true;
-			if (a<b)return false;
-			var va = this.GetValuePower(a);
-			var vb = forCompare.GetValuePower(b);
-			if (va >= vb) return true;
-			return false;
-		}
-
 		/// <summary>
 		/// Получить максимальное значение степени с учётом пустых значений. хотя лучше разобраться где они появляются
 		/// </summary>
@@ -253,6 +344,44 @@ namespace Engine.Utils
 			}
 			return maxPower;
 		}
+
+		/// <summary>
+		/// Больше
+		/// </summary>
+		/// <param name="forCompare"></param>
+		/// <returns></returns>
+		public Boolean IsBiggerThen(MegaInt forCompare)
+		{
+			var a = this.GetMaxPowerReal();
+			var b = forCompare.GetMaxPowerReal();
+			if (a>b)return true;
+			if (a<b)return false;
+			var va = this.GetValuePower(a);
+			var vb = forCompare.GetValuePower(b);
+			if (va > vb) return true;
+			return false;
+		}
+
+		/// <summary>
+		/// Больше нуля
+		/// </summary>
+		/// <returns></returns>
+		public Boolean IsBigger0()
+		{
+			var a = this.GetMaxPowerReal();
+			if (a > 0) return true;
+			var va = this.GetValuePower(a);
+			if (va > 0) return true;
+			return false;
+		}
+
+		public int GetValue(int power)
+		{
+			return _values[power];
+		}
+
+
+		#region ToStrings
 
 		public string GetAsString()
 		{
@@ -281,8 +410,7 @@ namespace Engine.Utils
 			var s = "> ";
 			//for (int i = maxPower; i >= 0; i=i-3){s += i + " ";}
 
-			for (int i = maxPower; i >= 0; i=i-3)
-			{
+			for (int i = maxPower; i >= 0; i = i - 3){
 				var sa = "000";
 				if (_values.ContainsKey(i)){
 					var v = _values[i];
@@ -293,9 +421,84 @@ namespace Engine.Utils
 				s += " " + sa;
 			}
 
-
 			//узнаем максимальную степерь потом через пробел выводим через for все значения
 			return s;
+		}
+
+		#endregion
+
+		public static MegaInt Function1(int baseValue, int level)
+		{
+			if (baseValue<2)return new MegaInt();// возвращаем пустое значение
+			var mi = new MegaInt();
+			mi.AddValue(0,baseValue);
+			Function1R(mi,baseValue,1,level);// рекурсивная функция
+			return mi;
+		}
+
+		/// <summary>
+		/// Рекурсивная функция
+		/// </summary>
+		/// <param name="megaInt"></param>
+		/// <param name="baseValue"></param>
+		/// <param name="curLevel"></param>
+		/// <param name="maxLevel"></param>
+		private static void Function1R(MegaInt megaInt, int baseValue, int curLevel,int maxLevel)
+		{
+			if (curLevel > maxLevel) return;
+			megaInt.MulValue(baseValue);
+			megaInt.MulValue(curLevel);
+			Function1R(megaInt, baseValue, curLevel + 1, maxLevel);
+		}
+
+		/// <summary>
+		/// Получение 100 точек от 0 до maxInt в равной пропорции в зависимости от максимальной степени исходного числа
+		/// </summary>
+		/// <param name="maxInt"></param>
+		/// <returns></returns>
+		public List<MegaInt> Function100(MegaInt maxInt,string fileName)
+		{
+			var a = new FileArchieve(fileName);// создаём
+			var ms = new MemoryStream();
+			a.AddString(ms, "" + maxInt.GetAsFullLineString() + " : " + Environment.NewLine);
+			
+			var r = new List<MegaInt>();
+
+			var max = maxInt.CopyThis();
+			var maxPower = max.GetMaxPowerReal();// степень числа (кратная 3) (особенность MegaInt)
+			float maxValue = max.GetValue(maxPower);// значение максимальной степени
+			// количество степеней в переданном числе. надо распределить в каждой степени заданное количество подэлементов
+			float stepPower = maxPower/100f;
+			float stepValue = maxValue/100f;
+
+			a.AddString(ms, "stepP=" + stepPower + " stepV= " + stepValue + " maxP=" + maxPower + " maxV=" + maxValue + Environment.NewLine);
+
+			for (int i = 1; i <= 100; i++){
+				int vp = (int) (Math.Round(i*stepPower));
+				int vv = (int) (Math.Truncate(i*stepValue));
+				// корректируем в зависимости от степени
+				var u = i*stepPower;
+				u /= 3;
+				var korr1 = 1;
+				if (u > .33) korr1 = 10;
+				if (u > .66) korr1 = 100;
+				vv *= korr1;
+				//усилить корректировку, сейчас стыки будут видны
+
+				var mi = new MegaInt(vp, vv);
+				r.Add(mi);
+
+				a.AddString(ms,
+					i.ToString().PadLeft(3) + "\t u=\t" + (u).ToString().PadRight(7) + "\t" + (i*stepPower).ToString().PadRight(7) +
+					"\t p=\t" + vp.ToString().PadRight(3) + "\t v=\t" + vv.ToString().PadRight(4) +"\t"+
+					mi.GetAsFullLineString() + Environment.NewLine);
+			}
+
+			a.AddStream(fileName, ms);// сохраняем
+			a.Dispose();
+
+
+			return r;
 		}
 	}
 }

@@ -25,7 +25,7 @@ namespace SimpleMapEditor
 			base.Keyboard(sender, e);
 			if (e.IsKeyPressed(Keys.LButton))
 			{
-				Controller.StartEvent("MapChangeMapPos", this, PointEventArgs.Set(MapX - e.CursorX, MapY - e.CursorY));
+				Controller.StartEvent("MapChangeMapPos", this, PointEventArgs.Set(Editor.MapX - e.CursorX, Editor.MapY - e.CursorY));
 				Controller.StartEvent("ExitFullView");
 			}
 		}
@@ -39,19 +39,19 @@ namespace SimpleMapEditor
 		/// </summary>
 		protected const int blockW = 1;
 
-		protected override void DrawObject(VisualizationProvider vp)
+		public override void DrawObject(VisualizationProvider vp)
 		{
 			vp.SetColor(Color.Green);
 			vp.Print(900, 350, "Режим");
 			vp.SetColor(Color.Yellow);
 			vp.Print(900, 365, "");
-			vp.Print(900, 380, " M(" + MapX + "," + MapY + ")");
+			vp.Print(900, 380, " M(" + Editor.MapX + "," + Editor.MapY + ")");
 			vp.Print(900, 395, " C(" + CursorPoint.X + "," + CursorPoint.Y + ")");
 			foreach (var d in Data)
 			{
 				var o = d.Value;
-				int x1 = o.X / 16 + MapX;
-				int y1 = o.Y / 16 + MapY;
+				int x1 = o.X / 16 + Editor.MapX;
+				int y1 = o.Y / 16 + Editor.MapY;
 				if (x1 > 800) continue;
 				if (y1 > 600) continue;
 				vp.SetColor(Color.White);

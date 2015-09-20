@@ -14,6 +14,16 @@ namespace GalaxyArmy.Model
 	class ArmyOne
 	{
 		/// <summary>
+		/// Текущее количество тренировочных баз
+		/// </summary>
+		public int TrainingBaseCount;
+
+		/// <summary>
+		/// Цена покупки тренировочного центра
+		/// </summary>
+		public MegaInt TrainingBaseCost;
+
+		/// <summary>
 		/// Количество тренируемой армии
 		/// </summary>
 		public MegaInt TrainingArmy;
@@ -43,15 +53,24 @@ namespace GalaxyArmy.Model
 		/// </summary>
 		public MegaInt ReadyArmy;
 
-		public ArmyOne()
+		/// <summary>
+		/// Имя армии - пехота, авиация и т.п.
+		/// </summary>
+		public string ArmyName;
+
+		public ArmyOne(EnumUpgradesGroup armyType)
 		{
+			ArmyName = "Неизвестный тип армии";
+			if (armyType == EnumUpgradesGroup.Army1) { ArmyName = "Пехота"; }
+			if (armyType == EnumUpgradesGroup.Army2) { ArmyName = "Танки"; }
+			if (armyType == EnumUpgradesGroup.Army3) { ArmyName = "Авиация"; }
+			if (armyType == EnumUpgradesGroup.Army4) { ArmyName = "Десант"; }
 			TimeDelay = 150;
 			TimeDelayCurrent = 0;
 			TrainingArmy = new MegaInt();
-			TrainingArmy.AddValue(0, 1);
 			ReadyArmy = new MegaInt();
 			BuyMaxArmy=new MegaInt();
-			SoldierCost=100;
+			TrainingBaseCount = 0;
 		}
 
 		/// <summary>
@@ -67,16 +86,47 @@ namespace GalaxyArmy.Model
 			}
 		}
 
+		public void RecalcValues(GeneralFactors factors)
+		{
+			int t = 240;// начальная пауза для тренировки солдат
+			var instructorMultiplier = factors.Instructor1SoldiersTraining;
+			var additionalPlace = factors.UArmy1TrainingAdditionalPlace;
+
+			// или придётся отказаться от покупки солдат или значительно снизить эффективность - покупка может сделать игру слишком легкой
+			// может быть увеличивать цену покупки если уже есть готовая ждущая армия.
+			// ** количество солдат которых можно купить
+			RefreshTotalBuy(factors.CurrentMoneyGet());
+
+			// ** Вычисление стоимости центра
+			TrainingBaseCost = MegaInt.Function1(4, TrainingBaseCount + 1);
+
+			// ** стомость покупки
+			SoldierCost = 100 - factors.UArmy1SoldierCost;
+
+			// ** скорость 
+			TimeDelay = t;
+			var td = factors.Galaxy1TimeDelayMultiplier;
+			if (td > 0) TimeDelay /= td;
+
+			// ** количество обучающихся
+			TrainingArmy=new MegaInt();
+			if (TrainingBaseCount > 0){
+				var a = new MegaInt(0, TrainingBaseCount);
+				a.AddValue(0, additionalPlace);
+				a.MulValue(instructorMultiplier);
+				TrainingArmy.AddValue(a);
+			}
+		}
+
 		/// <summary>
 		/// Обновить информацию о том, сколько можно купить солдат
 		/// </summary>
 		public void RefreshTotalBuy(MegaInt currMoney)
 		{
-			// надо рассчитать сколько солдат можно купить
-			// нужно разделить имеющееcя число на стоимость солдата
 			var cm = currMoney.CopyThis();
 			cm.DivValue(SoldierCost);
 			BuyMaxArmy = cm;
 		}
+
 	}
 }

@@ -37,7 +37,7 @@ namespace Engine.Views.Debug
 			visualizationProvider.Box(HeaderX, HeaderY, HeaderWidth, HeaderHeight);
 		}
 
-		protected override void DrawObject(VisualizationProvider vp)
+		public override void DrawObject(VisualizationProvider vp)
 		{
 			base.DrawObject(vp);
 			i++;

@@ -9,6 +9,7 @@ namespace Engine.Utils.Editor
 	/// <remarks>В основном планируется использовать в редакторе. 
 	/// интерфейс требует реализации сохранения данных в словарь и чтение из словаря
 	/// получается дольше чем другим способом, но зато весь контроль сохранения остаётся за классом редактора
+	/// Может потребоваться восстановление данных. но это выходит за рамки интерфейса
 	/// </remarks>
 	public interface IDataHolder
 	{
@@ -28,6 +29,5 @@ namespace Engine.Utils.Editor
 		/// </summary>
 		/// <param name="data"></param>
 		void Load(Dictionary<String, String> data);
-
 	}
 }

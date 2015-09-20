@@ -172,7 +172,7 @@ namespace SimpleMapEditor
 			}
 		}
 
-		protected override void DrawObject(VisualizationProvider visualizationProvider)
+		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
 			visualizationProvider.SetColor(Color.BurlyWood);
 			visualizationProvider.Print(200, 100, " EditorUI");

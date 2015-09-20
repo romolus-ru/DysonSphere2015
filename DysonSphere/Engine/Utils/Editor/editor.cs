@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using Engine.Controllers;
 using Engine.Controllers.Events;
 using Engine.Views;
@@ -17,6 +18,21 @@ namespace Engine.Utils.Editor
 	public class Editor : ViewControl
 	{
 		//private List<ILayer<IDataHolder>> _layers = new List<ILayer<IDataHolder>>();
+
+		/// <summary>
+		/// Кордината центра карты
+		/// </summary>
+		public int MapX;
+
+		/// <summary>
+		/// Кордината центра карты
+		/// </summary>
+		public int MapY;
+
+		/// <summary>
+		/// Степень уменьшения. от 1:1 до 1:10 и более. вторая цифра и есть степень уменьшения
+		/// </summary>
+		public int Zoom;
 
 		/// <summary>
 		/// Спрятанное поле. все функции работают с текущим слоем, чаще всего
@@ -50,6 +66,7 @@ namespace Engine.Utils.Editor
 			//одинаковые имена в любом случае противопоказаны
 			if (LayerExists(layer.LayerName)) return;// если такой слой уже создан то выходим
 			var l = layer as ViewDraggable;
+			(l as ILayer<IDataHolder>).Editor = this;
 			AddControl(l);
 		}
 
@@ -93,7 +110,7 @@ namespace Engine.Utils.Editor
 		{
 			var a = new FileArchieve(fileName);
 			foreach (var control in Controls){
-				var layer=control as Layer<IDataHolder>;
+				var layer=control as ILayer<IDataHolder>;
 				if (layer == null) continue;
 				if (!layer.CanStore) { continue; }
 				var ms = layer.Save();
@@ -108,6 +125,7 @@ namespace Engine.Utils.Editor
 		/// <param name="fileName"></param>
 		public void Load(string fileName)
 		{
+			if (!File.Exists(fileName)) return;
 			var a = new FileArchieve(fileName, false);
 			foreach (var fl in a.Files){
 				string layerName = fl.FullName;
@@ -154,6 +172,17 @@ namespace Engine.Utils.Editor
 				}
 			}
 			SetCurrentLayer(layerName);
+		}
+
+		/// <summary>
+		/// Вычисляем расстояние между координатами
+		/// </summary>
+		/// <returns></returns>
+		public float Distance(int x, int y, int X, int Y)
+		{
+			var dx = x - X;
+			var dy = y - Y;
+			return (float)Math.Sqrt(dx * dx + dy * dy);
 		}
 
 	}

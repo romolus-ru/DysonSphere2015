@@ -91,8 +91,8 @@ namespace SimpleMapEditor
 			var ea = e as PointEventArgs;
 			if (ea != null)
 			{
-				MapX = ea.Pt.X * blockH + 400;
-				MapY = ea.Pt.Y * blockW + 300;
+				Editor.MapX = ea.Pt.X * blockH + 400;
+				Editor.MapY = ea.Pt.Y * blockW + 300;
 			}
 		}
 
@@ -197,11 +197,11 @@ namespace SimpleMapEditor
 			return r;
 		}
 
-		protected override void DrawObject(VisualizationProvider vp)
+		public override void DrawObject(VisualizationProvider vp)
 		{
 			vp.SetColor(Color.AntiqueWhite);
 			vp.Print(900, 365, "" + _mode);
-			vp.Print(900, 380, " M(" + MapX + "," + MapY + ")");
+			vp.Print(900, 380, " M(" + Editor.MapX + "," + Editor.MapY + ")");
 			vp.Print(900, 395, " C(" + CursorPoint.X + "," + CursorPoint.Y + ")");
 			vp.Print(900, 410, "CF(" + CursorPointFrom.X + "," + CursorPointFrom.Y + ")");
 			vp.Print(900, 425, "" + (IsCanStartDrag ? "Перемещение" : "Запрет перемещения"));
@@ -214,8 +214,8 @@ namespace SimpleMapEditor
 			foreach (var d in Data)
 			{
 				var o = d.Value;
-				int x1 = o.X + MapX;
-				int y1 = o.Y + MapY;
+				int x1 = o.X + Editor.MapX;
+				int y1 = o.Y + Editor.MapY;
 				if (x1 < 0) continue;
 				if (y1 < 0) continue;
 				if (x1 > 800) continue;
@@ -226,13 +226,13 @@ namespace SimpleMapEditor
 			if (_targeted != null && _mode == Modes.MoveObject)
 			{
 				vp.SetColor(Color.BurlyWood);
-				vp.Circle(_targeted.X + MapX, _targeted.Y + MapY, 38);
+				vp.Circle(_targeted.X + Editor.MapX, _targeted.Y + Editor.MapY, 38);
 			}
 			if (_dragProcess)
 			{// для перемещения выводим отдельно цель в новых координатах, полупрозрачно
 				vp.SetColor(Color.BurlyWood, 50);
-				int x1 = _targeted.X + MapX - (CursorPointFrom.X - CursorPoint.X);
-				int y1 = _targeted.Y + MapY - (CursorPointFrom.Y - CursorPoint.Y);
+				int x1 = _targeted.X + Editor.MapX - (CursorPointFrom.X - CursorPoint.X);
+				int y1 = _targeted.Y + Editor.MapY - (CursorPointFrom.Y - CursorPoint.Y);
 				DrawObject(vp, x1, y1, _targeted);
 				vp.Circle(x1, y1, 43);
 			}
@@ -265,7 +265,7 @@ namespace SimpleMapEditor
 		{
 			if (!_dragProcess)
 			{// когда начинается процесс перемещения - перестаём определять перемещение объекта
-				_targeted = FindNearest(x - MapX, y - MapY);
+				_targeted = FindNearest(x - Editor.MapX, y - Editor.MapY);
 			}
 		}
 
@@ -280,8 +280,8 @@ namespace SimpleMapEditor
 
 		public override void DragEnd(int relX, int relY)
 		{
-			_targeted.X = RoundX(_targeted.X - relX + MapX);
-			_targeted.Y = RoundY(_targeted.Y - relY + MapY);
+			_targeted.X = RoundX(_targeted.X - relX + Editor.MapX);
+			_targeted.Y = RoundY(_targeted.Y - relY + Editor.MapY);
 			_dragProcess = false;
 		}
 
@@ -341,12 +341,12 @@ namespace SimpleMapEditor
 		/// <summary>Округлить координаты по блокам</summary>
 		/// <param name="x"></param>
 		/// <returns></returns>
-		protected int RoundX(int x) { return ((x - MapX + blockW / 2) / blockH) * blockW; }
+		protected int RoundX(int x) { return ((x - Editor.MapX + blockW / 2) / blockH) * blockW; }
 
 		/// <summary>Округлить координаты по блокам</summary>
 		/// <param name="y"></param>
 		/// <returns></returns>
-		protected int RoundY(int y) { return ((y - MapY + blockH / 2) / blockW) * blockH; }
+		protected int RoundY(int y) { return ((y - Editor.MapY + blockH / 2) / blockW) * blockH; }
 
 		//protected override void Keyboard(object sender, InputEventArgs e)
 		//{

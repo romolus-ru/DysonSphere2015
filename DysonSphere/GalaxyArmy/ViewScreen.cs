@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Engine;
 using Engine.Controllers;
@@ -31,6 +28,10 @@ namespace GalaxyArmy
 				Keys.Escape, "btnExit");
 			AddControl(b);
 
+			b = Button.InitButton(new MenuButton(Controller), Controller, 000, menuPosY, 74, 30, "GATotal", "   X", "Общая информация",
+				Keys.D0, "btnTotal");
+			AddControl(b);
+
 			b = Button.InitButton(new MenuButton(Controller), Controller, 100, menuPosY, 74, 30, "GASendArmy", "Завоевания", "Отправить армии",
 				Keys.D1, "btnSendArmy");
 			AddControl(b);
@@ -51,12 +52,14 @@ namespace GalaxyArmy
 				Keys.D4, "btnUpgrades");
 			AddControl(b);
 
-			AddScreen(1, "GASendArmy", new ScreenSendArmy(Controller,"Отправка армий",_gam));
-			AddScreen(2, "GAManagement", new ScreenManagement(Controller,"Управление инфраструктурой",_gam));
+			AddScreen(0, "GATotal", new ScreenTotal(Controller, "Общая информация", _gam));
+			AddScreen(1, "GASendArmy", new ScreenSendArmy(Controller, "Отправка армий", _gam));
+			AddScreen(2, "GAManagement", new ScreenManagement(Controller, "Управление инфраструктурой", _gam));
 			AddScreen(3, "GATraining", new ScreenTraining(Controller,"Тренировка войск",_gam));
 			AddScreen(4, "GAInstructors", new ScreenInstructors(Controller,"Инструкторы",_gam));
 			AddScreen(5, "GAUpgrades", new ScreenUpgrades(Controller,"Улучшения",_gam));
 
+			Controller.AddEventHandler("GATotal", GATotalEH);
 			Controller.AddEventHandler("GASendArmy", GASendArmyEH);
 			Controller.AddEventHandler("GAManagement", GAManagementEH);
 			Controller.AddEventHandler("GATraining", GATrainingEH);
@@ -72,6 +75,12 @@ namespace GalaxyArmy
 			screen.SetCoordinates(1024*pos,130);
 			AddControl(screen);
 			_screens.Add(screen);
+		}
+
+		private void GATotalEH(object sender, EventArgs e)
+		{
+			MoveToScreen("GATotal");
+			SetActive((Button)sender);
 		}
 
 		private void GAUpgradesEH(object sender, EventArgs e)
@@ -142,7 +151,8 @@ namespace GalaxyArmy
 			}
 
 		}
-		protected override void DrawObject(VisualizationProvider visualizationProvider)
+
+		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
 			_gam.Execute();
 			base.DrawObject(visualizationProvider);

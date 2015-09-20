@@ -92,6 +92,8 @@
     <Compile Include="ProgramTexture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sound.cs" />
+    <Compile Include="Utils\DataBindingSimple.cs" />
+    <Compile Include="Utils\DictionaryString.cs" />
     <Compile Include="Utils\FileArchieve.cs" />
     <Compile Include="Utils\Editor\Editor.cs" />
     <Compile Include="Utils\Editor\Layer.cs" />
@@ -103,10 +105,15 @@
     <Compile Include="Utils\GraphView\GraphicLine.cs" />
     <Compile Include="Utils\GraphView\ViewGraph.cs" />
     <Compile Include="Utils\MegaInt.cs" />
+    <Compile Include="Utils\Path\PathFactory.cs" />
     <Compile Include="Utils\Path\PathGeneratorBezier.cs" />
     <Compile Include="Utils\Path\Path.cs" />
     <Compile Include="Utils\Path\PathGenerator.cs" />
+    <Compile Include="Utils\Path\PathGeneratorLine.cs" />
+    <Compile Include="Utils\Path\PathSegment.cs" />
     <Compile Include="Utils\Path\Point.cs" />
+    <Compile Include="Utils\RandomNameGenerator.cs" />
+    <Compile Include="Utils\SafeInt.cs" />
     <Compile Include="Utils\Settings\Settings.cs" />
     <Compile Include="Utils\Settings\SettingsRow.cs" />
     <Compile Include="Utils\StateOne.cs" />
@@ -115,6 +122,7 @@
     <Compile Include="Views\Debug\WindowControlsView.cs" />
     <Compile Include="Views\Templates\DragObject.cs" />
     <Compile Include="Views\Templates\Panel.cs" />
+    <Compile Include="Views\Templates\ScrollBar.cs" />
     <Compile Include="Views\Templates\TrackBar.cs" />
     <Compile Include="Views\Templates\WindowSimple.cs" />
     <Compile Include="Views\ViewModalInput.cs" />
@@ -128,6 +136,7 @@
     <Compile Include="Views\ViewControl.cs" />
     <Compile Include="Views\ViewDraggable.cs" />
     <Compile Include="Views\ViewLabel.cs" />
+    <Compile Include="Views\ViewObject.cs" />
     <Compile Include="Views\ViewSystem.cs" />
     <Compile Include="VisualizationProvider.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">

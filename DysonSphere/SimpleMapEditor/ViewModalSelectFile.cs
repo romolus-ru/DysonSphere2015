@@ -58,7 +58,7 @@ namespace SimpleMapEditor
 
 		private String _name = "";
 
-		protected override void DrawObject(VisualizationProvider visualizationProvider)
+		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
 			if (CursorOver)
 				visualizationProvider.SetColor(Color.FromArgb(50, Color.Chartreuse));

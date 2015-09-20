@@ -19,7 +19,7 @@ namespace Engine.Views
 			: base(controller)
 		{ txt = text; }
 
-		protected override void DrawObject(VisualizationProvider vp)
+		public override void DrawObject(VisualizationProvider vp)
 		{
 			vp.SetColor(Color.AntiqueWhite, 50);
 			vp.Print(X, Y, txt);

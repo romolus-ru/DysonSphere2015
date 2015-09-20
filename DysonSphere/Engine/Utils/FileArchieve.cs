@@ -2,13 +2,14 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.IO.Compression;
+using System.Text;
 
 namespace Engine.Utils
 {
 	/// <summary>
 	/// Работа с архивным файлом (zip, поддерживается .net по умолчанию)
 	/// </summary>
-	internal class FileArchieve : IDisposable
+	public class FileArchieve : IDisposable
 	{
 		/// <summary>
 		/// Открываемый архив
@@ -98,6 +99,16 @@ namespace Engine.Utils
 		~FileArchieve()
 		{
 			Dispose(false);
+		}
+
+		/// <summary>
+		/// Записываем тестовую строку
+		/// </summary>
+		public void AddString(MemoryStream ms, string s)
+		{
+			var enc = Encoding.UTF8;
+			var bytes = enc.GetBytes(s);
+			ms.Write(bytes, 0, bytes.Length);
 		}
 
 	}

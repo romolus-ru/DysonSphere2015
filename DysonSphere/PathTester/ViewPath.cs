@@ -73,14 +73,16 @@ namespace PathTester
 				pts.Add(new Point(rnd.Next(1024), rnd.Next(768)));
 				pts.Add(new Point(rnd.Next(1024), rnd.Next(768)));
 				pts.Add(p4);
-				p.AddPointsOneSegment(pts, 40, new PathGeneratorBezier());
+				p.ClearAllPoints();
+				p.AddSegment("","Bezier",pts,40);
+				p.GeneratePoints();
 				paths.Add(p);
 			}
 		}
 
 		private int pause = 0;
 
-		protected override void DrawObject(VisualizationProvider visualizationProvider)
+		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
 			foreach (var path in paths)
 			{

@@ -33,7 +33,7 @@ namespace Engine.Views.Templates
 			Controller.StartEvent("ViewSendToBack", this, EventArgs.Empty);
 		}
 
-		protected override void DrawObject(VisualizationProvider visualizationProvider)
+		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
 			base.DrawObject(visualizationProvider);
 			visualizationProvider.SetColor(Color.White, 80);

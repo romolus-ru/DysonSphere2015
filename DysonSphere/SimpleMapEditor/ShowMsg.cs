@@ -50,7 +50,7 @@ namespace SimpleMapEditor
 			return false;// не реагируем совсем
 		}
 
-		protected override void DrawObject(VisualizationProvider visualizationProvider)
+		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
 			base.DrawObject(visualizationProvider);
 			if (_alpha == 0) { return; }

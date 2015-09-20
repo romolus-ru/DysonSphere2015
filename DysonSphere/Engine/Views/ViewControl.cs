@@ -10,7 +10,7 @@ namespace Engine.Views
 	/// <summary>
 	/// Элемент управления. может содержать другие компоненты и передавать им клавиатуру и мышь
 	/// </summary>
-	public class ViewControl:IViewObject
+	public class ViewControl:ViewObject, IViewObject
 	{
 		#region Основные переменные
 
@@ -47,7 +47,10 @@ namespace Engine.Views
 		/// <summary>
 		/// Флаг, находится ли курсор над компонентом
 		/// </summary>
-		public Boolean CursorOver { get; set; }
+		public Boolean CursorOver { 
+			get; 
+			set; 
+		}
 
 		/// <summary>
 		/// вложенные компоненты
@@ -259,8 +262,9 @@ namespace Engine.Views
 			if (Controls.Count>0){
 				CursorOverOffed = false;
 				foreach (var control in Controls){
-					control.CursorOver = false;
-					if (!control.InRange(args.Pt.X - X, args.Pt.Y - Y)) continue; // компонент не в точке нажатия
+					//control.CursorOver = false;
+					control.CursorOverOff();
+					if (!control.InRange(args.Pt.X - X, args.Pt.Y - Y))continue; // компонент не в точке нажатия
 					//control.CursorOver = true;// control.CursorEH сам установит флаг CursorOver
 					var b = PointEventArgs.Set(args.Pt.X - X, args.Pt.Y - Y);
 						// смещаем курсор и передаём контролу смещенные координаты
@@ -349,7 +353,7 @@ namespace Engine.Views
 		/// Прорисовка объекта переопределяемая
 		/// </summary>
 		/// <param name="visualizationProvider"></param>
-		protected virtual void DrawObject(VisualizationProvider visualizationProvider) { }
+		public override void DrawObject(VisualizationProvider visualizationProvider) { }
 
 		/// <summary>
 		/// Прорисовать фон компонентов, если нужно
@@ -406,13 +410,13 @@ namespace Engine.Views
 		/// </summary>
 		protected void CursorOverOff()
 		{
-			if (CursorOverOffed) return;
-			CursorOverOffed = true;
 			CursorOver = false;
+			if (CursorOverOffed) return;
 			foreach (var controls in Controls)
 			{
 				controls.CursorOverOff();
 			}
+			CursorOverOffed = true;
 		}
 
 		/// <summary>

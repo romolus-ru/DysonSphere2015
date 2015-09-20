@@ -101,7 +101,8 @@ namespace Engine.Views.Templates
 		}
 
 		private int _cx = 0;
-		protected override void DrawObject(VisualizationProvider visualizationProvider)
+
+		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
 			int x = GetX();
 			int h = Height/2;
@@ -132,8 +133,8 @@ namespace Engine.Views.Templates
 		protected override void Keyboard(object o, InputEventArgs args)
 		{
 			base.Keyboard(o, args);
-			if (args.IsKeyPressed(Keys.Left)) {_currentValue -= _step1;RecalcSliderPos();}
-			if (args.IsKeyPressed(Keys.Right)) {_currentValue += _step1;RecalcSliderPos();}
+			//if (args.IsKeyPressed(Keys.Left)) {_currentValue -= _step1;RecalcSliderPos();}
+			//if (args.IsKeyPressed(Keys.Right)) {_currentValue += _step1;RecalcSliderPos();}
 			var a = args.IsKeyPressed(Keys.LButton);
 			if (CursorOver&&a) args.Handled = true;// если кнопка нажата - отмечаем что событие обработано
 			var sLButton = _stateLButton.Check(a);

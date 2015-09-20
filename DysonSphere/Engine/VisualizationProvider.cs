@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
 using Engine.Controllers;
@@ -227,6 +228,32 @@ namespace Engine
 		}
 
 		/// <summary>
+		/// Нарисовать прямоугольник со скругленными углами
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="radius"></param>
+		public void Rectangle(int x, int y, int width, int height,int radius)
+		{
+			if (radius == 0){// радиус =0 значит вызываем обычный метод
+				_Rectangle(x,y,width,height);
+				return;
+			}
+			int r = radius*2;
+			int ri = radius;
+			if (width < r) ri = width / 2;// если радиус больше чем нужно - уменьшаем
+			if (height < r) ri = height / 2;
+			_Rectangle(x, y, width, height, ri);
+		}
+
+		protected virtual void _Rectangle(int x, int y, int width, int height,int radius)
+		{
+
+		}
+
+		/// <summary>
 		/// Нарисовать закрашенный прямоугольник
 		/// </summary>
 		/// <param name="x"></param>
@@ -237,6 +264,22 @@ namespace Engine
 		{ _Box(x + curOffsetX, y + curOffsetY, width, height); }
 
 		protected virtual void _Box(int x, int y, int width, int height)
+		{
+
+		}
+
+		/// <summary>
+		/// Нарисовать закрашенный прямоугольник со скругленными углами
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="radius"></param>
+		public void Box(int x, int y, int width, int height, int radius)
+		{ _Box(x + curOffsetX, y + curOffsetY, width, height,radius); }
+
+		protected virtual void _Box(int x, int y, int width, int height, int radius)
 		{
 
 		}
@@ -284,16 +327,16 @@ namespace Engine
 		{
 			//return;
 			{
-				const int numSegments = 36;
+				const int numSegments = 360;
 
 				var curValue = (int) (1f*cur/max*numSegments);
 				var color = Color; // потом этот цвет будет меняться
 				OffsetAdd(cx, cy);
-				for (byte i = 36; i > 0; i--)
+				for (int i = 360; i > 0; i--)
 				{
-					var c1 = (curValue - i)*10;
+					var c1 = (curValue - i)*1;
 					if (c1 < 0) c1 += 360;
-					var c2 = c1 - 10;
+					var c2 = c1 - 1;
 					if (c2 < 0) c2 += 360;
 
 					var p1 = RoundPoints[c1];
@@ -307,7 +350,7 @@ namespace Engine
 					var nx2 = (int) ((radius + 20)*p2.X);
 					var ny2 = (int) ((radius + 20)*p2.Y);
 
-					SetColor(color, (byte) (100-i*10/3.6f));
+					SetColor(color, (byte) (100-i*10/36f));
 					Quad(mx1, my1, mx2, my2, nx2, ny2, nx1, ny1);
 				}
 				OffsetRemove();
@@ -484,9 +527,10 @@ namespace Engine
 		/// <summary>
 		/// Загрузить шрифт по имени 
 		/// </summary>
+		/// <param name="fontCodeName">строковой код шрифта, по которому к нему потом можно обращаться</param>
 		/// <param name="fontName">Системное имя шрифта</param>
 		/// <param name="fontHeight">Высота шрифта</param>
-		public virtual void LoadFont(String fontName, int fontHeight = 12) { }
+		public virtual void LoadFont(String fontCodeName, String fontName, int fontHeight = 12) { }
 
 		/// <summary>
 		/// Загрузить текстуру-шрифт
@@ -494,6 +538,11 @@ namespace Engine
 		/// <param name="textureName"></param>
 		public virtual void LoadFontTexture(String textureName) { }
 
+		/// <summary>
+		/// Установить 
+		/// </summary>
+		/// <param name="fontCodeName"></param>
+		public virtual void SetFont(String fontCodeName) { }
 		/// <summary>
 		/// Вычисление длины текста
 		/// </summary>

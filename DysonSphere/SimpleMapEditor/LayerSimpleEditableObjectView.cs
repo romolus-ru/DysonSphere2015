@@ -53,8 +53,8 @@ namespace SimpleMapEditor
 			var ea = e as PointEventArgs;
 			if (ea != null)
 			{
-				MapX = ea.Pt.X * LayerSimpleEditableObject.blockH + 400;
-				MapY = ea.Pt.Y * LayerSimpleEditableObject.blockW + 300;
+				Editor.MapX = ea.Pt.X * LayerSimpleEditableObject.blockH + 400;
+				Editor.MapY = ea.Pt.Y * LayerSimpleEditableObject.blockW + 300;
 			}
 		}
 
@@ -83,10 +83,10 @@ namespace SimpleMapEditor
 			SetSize(visualizationProvider.CanvasWidth, visualizationProvider.CanvasHeight);
 		}
 
-		protected override void DrawObject(VisualizationProvider vp)
+		public override void DrawObject(VisualizationProvider vp)
 		{
 			vp.SetColor(Color.AntiqueWhite);
-			vp.Print(900, 380, " M(" + MapX + "," + MapY + ")");
+			vp.Print(900, 380, " M(" + Editor.MapX + "," + Editor.MapY + ")");
 			vp.Print(900, 395, " C(" + CursorPoint.X + "," + CursorPoint.Y + ")");
 			vp.Print(900, 410, "CF(" + CursorPointFrom.X + "," + CursorPointFrom.Y + ")");
 			var num = ObjectTypeAtlas.GetTextureNum(_objType);
@@ -95,8 +95,8 @@ namespace SimpleMapEditor
 			foreach (var d in Data)
 			{
 				var o = d.Value;
-				int x1 = o.X + MapX;
-				int y1 = o.Y + MapY;
+				int x1 = o.X + Editor.MapX;
+				int y1 = o.Y + Editor.MapY;
 				if (x1 < 0) continue;
 				if (y1 < 0) continue;
 				if (x1 > 800) continue;
@@ -106,7 +106,7 @@ namespace SimpleMapEditor
 			if (_targeted != null)
 			{
 				vp.SetColor(Color.BurlyWood);
-				vp.Circle(_targeted.X + MapX, _targeted.Y + MapY, 38);
+				vp.Circle(_targeted.X + Editor.MapX, _targeted.Y + Editor.MapY, 38);
 			}
 			// выводим текущую текстуру
 			vp.DrawTexturePart(900, 320, "mainEdit", 32, 32, ObjectTypeAtlas.GetTextureNum(_objType));
@@ -133,7 +133,7 @@ namespace SimpleMapEditor
 
 		public override void MouseMove(int x, int y)
 		{
-			_targeted = FindNearest(x - MapX, y - MapY);
+			_targeted = FindNearest(x - Editor.MapX, y - Editor.MapY);
 		}
 
 		/// <summary>
@@ -171,12 +171,12 @@ namespace SimpleMapEditor
 		/// <summary>Округлить координаты по блокам</summary>
 		/// <param name="x"></param>
 		/// <returns></returns>
-		protected int RoundX(int x) { return ((x - MapX + LayerSimpleEditableObject.blockW / 2) / LayerSimpleEditableObject.blockH) * LayerSimpleEditableObject.blockW; }
+		protected int RoundX(int x) { return ((x - Editor.MapX + LayerSimpleEditableObject.blockW / 2) / LayerSimpleEditableObject.blockH) * LayerSimpleEditableObject.blockW; }
 
 		/// <summary>Округлить координаты по блокам</summary>
 		/// <param name="y"></param>
 		/// <returns></returns>
-		protected int RoundY(int y) { return ((y - MapY + LayerSimpleEditableObject.blockH / 2) / LayerSimpleEditableObject.blockW) * LayerSimpleEditableObject.blockH; }
+		protected int RoundY(int y) { return ((y - Editor.MapY + LayerSimpleEditableObject.blockH / 2) / LayerSimpleEditableObject.blockW) * LayerSimpleEditableObject.blockH; }
 
 	}
 }

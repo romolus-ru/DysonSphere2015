@@ -43,8 +43,13 @@ namespace VisualizationOpenGL4
 			gl.DepthFunc(GL.LESS);		// The Type Of Depth Test To Do
 			gl.Enable(GL.ALPHA_TEST);
 			ResizeGlScene(_formOpenGl.Width, _formOpenGl.Height);
-			LoadFont("Consolas", 14);
-			//LoadFont("Calibri", 12);
+			//LoadFont("default", "Consolas", 24);
+			//LoadFont("default", "Book Antiqua", 14);
+			//LoadFont("default2", "Book Antiqua", 10);
+			LoadFont("default", "Impact обычный", 12);
+			//LoadFont("default2", "Segoe UI", 15);
+			LoadFont("default2", "Segoe Print", 15);
+			//LoadFont("default2", "Calibri", 14);
 			_controller.AddEventHandler("setHeader", (o, args) => SetHeader(o, args as MessageEventArgs));
 			_controller.AddEventHandler("systemExit", Exit);
 			LoadTexture("WTBGRound", "Resources/round.png");
@@ -163,6 +168,55 @@ namespace VisualizationOpenGL4
 			Line(x, y + height, x, y);
 		}
 
+		protected override void _Rectangle(int x, int y, int width, int height, int radius)
+		{
+			Line(x + radius, y, x + width - radius, y);
+			Line(x + width, y + radius, x + width, y + height - radius);
+			Line(x + width-radius, y + height, x+radius, y + height);
+			Line(x, y + height - radius, x, y + radius);
+			_drawArc(x + radius, y + radius, radius, 270, 360, 10);
+			_drawArc(x + width - radius, y + radius, radius, 0, 90, 10);
+			_drawArc(x + width - radius, y + height - radius, radius, 90, 180, 10);
+			_drawArc(x + radius, y + height - radius, radius, 180, 270, 10);
+		}
+
+		// рисуем скругление для точки с заданным радиусом для углов в диапазоне от 1 до 2 с заданным шагом
+		private void _drawArc(int x, int y, int radius, int a1, int a2, int stepA)
+		{
+			var cx = x;
+			var cy = y;
+			var rd = radius;
+			var st = stepA;
+			if (radius < 50) st = 30;
+			if (radius < 200) st = 10;
+			if (radius < 400) st = 3;
+
+			var p1 = RoundPoints[a1];
+			var x1 = (int) (p1.X*rd + cx);
+			var y1 = (int) (p1.Y*rd + cy);
+
+			int i;
+			int x2;
+			int y2;
+
+			for (i = a1+stepA; i <= a2; i+=st){
+				p1 = RoundPoints[i];
+				x2 = (int) (p1.X*rd + cx);
+				y2 = (int) (p1.Y*rd + cy);
+				Line(x1,y1,x2,y2);
+				x1 = x2;
+				y1 = y2;
+			}
+			i += st;// дорисовываем дополнительно
+			if (i > 360) i -= 360;
+			p1 = RoundPoints[i];
+			x2 = (int)(p1.X * rd + cx);
+			y2 = (int)(p1.Y * rd + cy);
+			Line(x1, y1, x2, y2);
+
+
+		}
+
 		protected override void _Box(int x, int y, int width, int height)
 		{
 			gl.Disable(GL.BLEND);
@@ -177,6 +231,76 @@ namespace VisualizationOpenGL4
 			gl.Vertex2f(x + width, y + height);
 			gl.Vertex2f(x, y + height);
 			gl.End();
+		}
+
+		protected override void _Box(int x, int y, int width, int height, int radius)
+		{
+			_Line(x + radius, y, x + width - radius, y);
+			_Line(x + width, y + radius, x + width, y + height - radius);
+			_Line(x + width-radius, y + height, x+radius, y + height);
+			_Line(x, y + height - radius, x, y + radius);
+			var p1 = _getArcPoints(x + radius, y + radius, radius, 270, 360, 10);
+			var p2 = _getArcPoints(x + width - radius, y + radius, radius, 0, 90, 10);
+			var p3 = _getArcPoints(x + width - radius, y + height - radius, radius, 90, 180, 10);
+			var p4 = _getArcPoints(x + radius, y + height - radius, radius, 180, 270, 10);
+
+			gl.Disable(GL.BLEND);
+			gl.Enable(GL.LINE_SMOOTH);
+			gl.Disable(GL.TEXTURE_2D); // Turn off textures
+			gl.Enable(GL.BLEND);
+			gl.BlendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
+
+			gl.Begin(GL.POLYGON);
+			foreach (var f in p1){gl.Vertex2f(f.X,f.Y);}
+			gl.Vertex2f(x+radius, y);
+			gl.Vertex2f(x + width-radius, y);
+			foreach (var f in p2) { gl.Vertex2f(f.X, f.Y); }
+
+			gl.Vertex2f(x + width, y + radius);
+			gl.Vertex2f(x + width, y + height - radius);
+			foreach (var f in p3) { gl.Vertex2f(f.X, f.Y); }
+
+			gl.Vertex2f(x + width - radius, y + height);
+			gl.Vertex2f(x + radius, y + height);
+			foreach (var f in p4) { gl.Vertex2f(f.X, f.Y); }
+			
+			gl.Vertex2f(x, y + height - radius);
+			gl.Vertex2f(x, y + radius);
+
+			gl.End();
+		}
+
+		// рисуем скругление для точки с заданным радиусом для углов в диапазоне от 1 до 2 с заданным шагом
+		// почти копия _drawArc
+		private List<PointF> _getArcPoints(int x, int y, int radius, int a1, int a2, int stepA)
+		{
+			var ret = new List<PointF>();
+			var cx = x;
+			var cy = y;
+			var rd = radius;
+			var st = stepA;
+			if (radius < 50) st = 30;
+			if (radius < 200) st = 10;
+			if (radius < 400) st = 3;
+			int i;
+			PointF p1;
+			int x2;
+			int y2;
+			
+			for (i = a1 + stepA; i <= a2; i += st){
+				p1 = RoundPoints[i];
+				x2 = (int)(p1.X * rd + cx);
+				y2 = (int)(p1.Y * rd + cy);
+				ret.Add(new PointF(x2, y2));
+			}
+			i += st;// дорисовываем дополнительно
+			if (i > 360) i -= 360;
+			p1 = RoundPoints[i];
+			x2 = (int)(p1.X * rd + cx);
+			y2 = (int)(p1.Y * rd + cy);
+			ret.Add(new PointF(x2, y2));
+
+			return ret;
 		}
 
 		protected override void _Quad(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
@@ -597,14 +721,14 @@ namespace VisualizationOpenGL4
 
 		}
 
-		public override void LoadFont(string fontName, int fontHeight = 12)
+		public override void LoadFont(string fontCodeName, string fontName, int fontHeight = 12)
 		{
 			//LoadTexture(TextureFont, @"..\resources\fonts\TNR_B.tga");
 			//LoadTexture(TextureFont, @"TNR_B.tga");
 			//LoadTexture(TextureFont, @"TNR_B.png");
 			//LoadTextureModify(TextureFont, @"TNR_B.tga", new TPTRounded(), Color.Empty, Color.Empty);
 			FontHeight = fontHeight;
-			BuildFont(fontName, fontHeight);
+			BuildFont(fontCodeName, fontName, fontHeight);
 		}
 
 		public override void LoadFontTexture(string textureName)
@@ -617,7 +741,7 @@ namespace VisualizationOpenGL4
 		private int TextLength(byte[] text)
 		{
 			// 1.22 выявлена опытным путём, в дальнейшем может быть изменена
-			float len = text.Sum(с => (glyphMetrics[с].gmfCellIncX * FontHeight * 1.22f));
+			float len = text.Sum(с => (_glyphMetrics[с].gmfCellIncX * FontHeight * 1.22f));
 			return (int)(len);// + 0.5f);
 		}
 
@@ -730,6 +854,11 @@ namespace VisualizationOpenGL4
 		/// указатель на шрифт в памяти, наверное
 		/// </summary>
 		private int _fontBasePtr = -1;
+		
+		/// <summary>
+		/// Словарь ссылок на шрифт в памяти
+		/// </summary>
+		private Dictionary<string, int> _fontBasePtrs = new Dictionary<string, int>();
 
 		/// <summary>
 		/// Имя текстуры-шрифта
@@ -740,9 +869,13 @@ namespace VisualizationOpenGL4
 		private int _textCursorY = 0;
 
 		// Хранит информацию о шрифте. нужна для вычисления длины текста
-		private Gdi.GLYPHMETRICSFLOAT[] glyphMetrics = new Gdi.GLYPHMETRICSFLOAT[256];
+		private Gdi.GLYPHMETRICSFLOAT[] _glyphMetrics = new Gdi.GLYPHMETRICSFLOAT[256];
+		// хранит все метрики, которые были загружены в систему
+		private Dictionary<string, Gdi.GLYPHMETRICSFLOAT[]> _glyphMetricses = new Dictionary<string, Gdi.GLYPHMETRICSFLOAT[]>();
+		// хранит шрифты, созданные построителем шрифтов
+		private Dictionary<string, IntPtr> _fonts = new Dictionary<string, IntPtr>();
 
-		private void BuildFont(string fontName, int fontHeight)
+		private void BuildFont(string fontCodeName,string fontName, int fontHeight)
 		{
 			IntPtr font;
 			IntPtr oldfont;
@@ -765,11 +898,40 @@ namespace VisualizationOpenGL4
 
 			IntPtr dc = Wgl.wglGetCurrentDC();
 			oldfont = Gdi.SelectObject(dc, font);
-			Wgl.wglUseFontOutlinesA(dc, 0, 256, _fontBasePtr, 0, 0f, Wgl.WGL_FONT_POLYGONS, glyphMetrics);
+			Wgl.wglUseFontOutlinesA(dc, 0, 256, _fontBasePtr, 0, 0f, Wgl.WGL_FONT_POLYGONS, _glyphMetrics);
 			Wgl.wglUseFontBitmapsA(dc, 0, 256, _fontBasePtr);
 
 			Gdi.SelectObject(dc, oldfont);
-			Gdi.DeleteObject(font);
+			//Gdi.DeleteObject(font);// не удаляем объект, а храним
+			if (_fontBasePtrs.ContainsKey(fontCodeName))
+				_fontBasePtrs[fontCodeName] = _fontBasePtr;
+			else
+				_fontBasePtrs.Add(fontCodeName, _fontBasePtr);
+			if (_fonts.ContainsKey(fontCodeName))
+				_fonts[fontCodeName] = font;
+			else
+				_fonts.Add(fontCodeName, font);
+			if (_glyphMetricses.ContainsKey(fontCodeName))
+				_glyphMetricses[fontCodeName] = _glyphMetrics;
+			else
+				_glyphMetricses.Add(fontCodeName, _glyphMetrics);
+		}
+
+		public override void SetFont(string fontCodeName)
+		{
+			//return;
+			var a1 = _fontBasePtrs.ContainsKey(fontCodeName);
+			if (!a1) return;// если нету то выходим
+
+			_fontBasePtr = _fontBasePtrs[fontCodeName];
+			_glyphMetrics = _glyphMetricses[fontCodeName];
+			var font = _fonts[fontCodeName];
+
+			IntPtr dc = Wgl.wglGetCurrentDC();
+			IntPtr oldfont = Gdi.SelectObject(dc, font); 
+			//Wgl.wglUseFontOutlinesA(dc, 0, 256, _fontBasePtr, 0, 0f, Wgl.WGL_FONT_POLYGONS, _glyphMetrics);
+			Wgl.wglUseFontBitmapsA(dc, 0, 256, _fontBasePtr);
+			Gdi.SelectObject(dc, oldfont);
 		}
 
 		/// <summary>

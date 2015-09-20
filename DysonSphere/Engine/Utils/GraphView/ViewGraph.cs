@@ -178,7 +178,7 @@ namespace Engine.Utils.GraphView
 			}
 		}
 
-		protected override void DrawObject(VisualizationProvider visualizationProvider)
+		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
 			base.DrawObject(visualizationProvider);
 			int n = 0;

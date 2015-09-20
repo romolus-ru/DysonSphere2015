@@ -44,6 +44,10 @@
     <Compile Include="GAButton.cs" />
     <Compile Include="GalaxyArmy.cs" />
     <Compile Include="GalaxyCaptureProgressInfo.cs" />
+    <Compile Include="Model\EnumUpgradesGroup.cs" />
+    <Compile Include="Model\EnumUpgradesTypeIcon.cs" />
+    <Compile Include="Model\GeneralFactors.cs" />
+    <Compile Include="InstructorInfo.cs" />
     <Compile Include="Model\ArmyOne.cs" />
     <Compile Include="Model\GalaxyArmyModel.cs" />
     <Compile Include="MenuButton.cs" />
@@ -54,9 +58,13 @@
     <Compile Include="ScreenInstructors.cs" />
     <Compile Include="ScreenManagement.cs" />
     <Compile Include="ScreenSendArmy.cs" />
+    <Compile Include="ScreenTotal.cs" />
     <Compile Include="ScreenTraining.cs" />
     <Compile Include="ScreenUpgrades.cs" />
-    <Compile Include="TrainProgress1.cs" />
+    <Compile Include="TrainingProgress1.cs" />
+    <Compile Include="TrainingProgressBuy.cs" />
+    <Compile Include="Model\Upgrade.cs" />
+    <Compile Include="UpgradeButton.cs" />
     <Compile Include="UpgradesValuesEventArgs.cs" />
     <Compile Include="ViewClicks.cs" />
     <Compile Include="ViewClicks1.cs" />

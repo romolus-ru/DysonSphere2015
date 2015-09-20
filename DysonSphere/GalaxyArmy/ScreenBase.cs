@@ -33,7 +33,7 @@ namespace GalaxyArmy
 			Height = visualizationProvider.CanvasHeight - Y;
 		}
 
-		protected override void DrawObject(VisualizationProvider visualizationProvider)
+		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
 			base.DrawObject(visualizationProvider);
 			visualizationProvider.SetColor(Color.White);
@@ -44,5 +44,9 @@ namespace GalaxyArmy
 			visualizationProvider.Print(X + 15, Y + 15, _caption);
 		}
 
+		public override bool InRange(int x, int y)
+		{
+			return base.InRange(x, y);
+		}
 	}
 }

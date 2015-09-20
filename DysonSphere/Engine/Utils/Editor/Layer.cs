@@ -31,24 +31,15 @@ namespace Engine.Utils.Editor
 		public Dictionary<int, T> Data = new Dictionary<int, T>();
 
 		/// <summary>
-		/// Кордината центра карты
-		/// </summary>
-		public int MapX;
-
-		/// <summary>
-		/// Кордината центра карты
-		/// </summary>
-		public int MapY;
-
-		/// <summary>
 		/// Смещение центра карты
 		/// </summary>
 		protected int MapDelta = 16;
 
+		[Obsolete]
 		public void SynhronizeMapCoords(int mx, int my)
 		{
-			MapX = mx;
-			MapY = my;
+			Editor.MapX = mx;
+			Editor.MapY = my;
 		}
 
 		public Layer(Controller controller, String layerName) : base(controller)
@@ -74,6 +65,8 @@ namespace Engine.Utils.Editor
 		/// </summary>
 		public void CompressIndexes() { }
 
+		public Editor Editor { get; set; }
+
 		/// <summary>
 		/// Имя слоя, в архиве будет с таким же именем храниться
 		/// </summary>
@@ -95,14 +88,12 @@ namespace Engine.Utils.Editor
 		/// <returns></returns>
 		public int AddObject(String objType)
 		{
-			_counter++;
 			var newObj = CreateObject(objType);
-			newObj.Num = _counter;
-			Data.Add(_counter, newObj);
-			return _counter;
+			var c=AddObject(newObj);
+			return c;
 		}
 
-		public int AddObject(IDataHolder obj)
+		public virtual int AddObject(IDataHolder obj)
 		{
 			_counter++;
 			obj.Num = _counter;
@@ -114,6 +105,21 @@ namespace Engine.Utils.Editor
 		{
 			return Data[num];
 		}
+
+		/// <summary>
+		/// По имеющемуся экземпляру объекта получить его номер
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		public int GetNum(T obj)
+		{
+			var ret = -1;
+			foreach (var kv1 in Data){
+				if (kv1.Value.Equals(obj)) ret = kv1.Key;
+			}
+			return ret;
+		}
+
 
 		public virtual T CreateObject(String objType)
 		{
@@ -196,6 +202,7 @@ namespace Engine.Utils.Editor
 				}
 				if (num == -1) continue;// если номер не нашли значит что то не то - грузим следующий объект
 				T tmp = CreateObject(tp);// создаём нужный объект
+				if (tmp==null)throw new Exception("функция CreateObject скорее всего не переопределена");
 				Dictionary<String, String> dd = new Dictionary<string, string>();// словарь для загрузки данных
 				foreach (XmlNode item2 in item.ChildNodes){// получаем данные для воссоздания объекта
 					if (item2.Name != "data") continue;// нужны только данные словаря
@@ -212,14 +219,25 @@ namespace Engine.Utils.Editor
 			}
 		}
 
+		/// <summary>
+		/// Вывод объектов слоя по требованию. может вызываться из других слоёв, нужен для целостного отображения информации
+		/// </summary>
+		/// <param name="visualizationProvider"></param>
+		/// <param name="mapX">Координаты центра карты по X</param>
+		/// <param name="mapY">Координаты центра карты по Y</param>
+		public virtual void DrawObjectInBackground(VisualizationProvider visualizationProvider, int mapX, int mapY)
+		{
+			
+		}
+
 
 		protected override void Keyboard(object sender, InputEventArgs e)
 		{
 			base.Keyboard(sender, e);
-			if (e.IsKeyPressed(Keys.Left)) MapX += MapDelta;
-			if (e.IsKeyPressed(Keys.Right)) MapX -= MapDelta;
-			if (e.IsKeyPressed(Keys.Up)) MapY += MapDelta;
-			if (e.IsKeyPressed(Keys.Down)) MapY -= MapDelta;
+			if (e.IsKeyPressed(Keys.Left)) Editor.MapX += MapDelta;
+			if (e.IsKeyPressed(Keys.Right)) Editor.MapX -= MapDelta;
+			if (e.IsKeyPressed(Keys.Up)) Editor.MapY += MapDelta;
+			if (e.IsKeyPressed(Keys.Down)) Editor.MapY -= MapDelta;
 		}
 
 		/// <summary>

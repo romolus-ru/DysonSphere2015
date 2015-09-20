@@ -123,7 +123,7 @@ namespace ZChatTest
 			if (sender is Button) (sender as Button).Hide();
 		}
 
-		protected override void DrawObject(VisualizationProvider visualizationProvider)
+		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
 			base.DrawObject(visualizationProvider);
 

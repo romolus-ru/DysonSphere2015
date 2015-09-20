@@ -32,7 +32,7 @@ namespace GalaxyArmy
 			viewClicks.ClickAdd(x, y, added);
 		}
 
-		protected override void DrawObject(VisualizationProvider visualizationProvider)
+		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
 			base.DrawObject(visualizationProvider);
 			viewClicks.Draw(visualizationProvider);

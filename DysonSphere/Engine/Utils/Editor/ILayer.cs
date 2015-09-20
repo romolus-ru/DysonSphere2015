@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Security.Cryptography.X509Certificates;
 using Engine.Views.Templates;
 
 namespace Engine.Utils.Editor
@@ -11,6 +12,10 @@ namespace Engine.Utils.Editor
 	/// <remarks>Нужно для обхода работы с объектами, без интерфейса ошибка возникает, несмотря на прямое наследование</remarks>
 	public interface ILayer<out T> where T : IDataHolder
 	{
+		/// <summary>
+		/// Владелец слоя, редактор
+		/// </summary>
+		Editor Editor { get; set; }
 		/// <summary>
 		/// Имя слоя
 		/// </summary>
@@ -57,5 +62,13 @@ namespace Engine.Utils.Editor
 		void Load(MemoryStream data);
 
 		void Draw(VisualizationProvider visualizationProvider);
+
+		/// <summary>
+		/// Вывод объектов слоя по требованию. может вызываться из других слоёв, нужен для целостного отображения информации
+		/// </summary>
+		/// <param name="visualizationProvider"></param>
+		/// <param name="mapX">Координаты центра карты по X</param>
+		/// <param name="mapY">Координаты центра карты по Y</param>
+		void DrawObjectInBackground(VisualizationProvider visualizationProvider, int mapX, int mapY);
 	}
 }

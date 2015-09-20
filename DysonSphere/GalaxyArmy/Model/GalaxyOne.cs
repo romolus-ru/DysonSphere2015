@@ -13,6 +13,11 @@ namespace GalaxyArmy.Model
 	class GalaxyOne
 	{
 		/// <summary>
+		/// Номер галактики
+		/// </summary>
+		public EnumUpgradesGroup Group{get; protected set; }
+
+		/// <summary>
 		/// Количество собираемых денег
 		/// </summary>
 		public MegaInt IncomeMoney;
@@ -36,26 +41,33 @@ namespace GalaxyArmy.Model
 		/// Население
 		/// </summary>
 		private MegaInt _population;
+
 		/// <summary>
 		/// Армия
 		/// </summary>
-		private MegaInt _army;
+		public MegaInt Army;
 
 		/// <summary>
-		/// Сколько захвачено
+		/// Герои армии, приносят дополнительный доход и остаются после рестарта
 		/// </summary>
-		/// <remarks>100% означает что доход нужно считать немного по другому</remarks>
-		private int _captured;
+		public MegaInt ArmyHeroes;
 
-		public GalaxyOne()
+		/// <summary>
+		/// Захвачено
+		/// </summary>
+		private Boolean _captured;
+
+		public GalaxyOne(EnumUpgradesGroup group)
 		{
+			Group = group;
 			TimeDelay = 150;
 			TimeDelayCurrent = 0;
+			Army = new MegaInt();
 			IncomeMoney=new MegaInt();
 			IncomeMoney.AddValue(0, 1);
 			ClickCost=new MegaInt();
-			ClickCost.AddValue(0, 1);
-
+			ClickCost.AddValue(0, 100);
+			_captured = false;
 		}
 
 		/// <summary>
@@ -71,6 +83,67 @@ namespace GalaxyArmy.Model
 				ret = true;
 			}
 			return ret;
+		}
+
+		/// <summary>
+		/// Перевычислить показатели, в частности IncomeMoney
+		/// </summary>
+		public void RecalcValues(GeneralFactors factors)
+		{
+			// ** основные параметры для рассчетов
+			MegaInt p = factors.Galaxy1StartPopulation;
+			int c = factors.Galaxy1ConquerorCount;
+			int m = factors.UArmy1;
+			int t = 120;// начальная пауза для передачи денег
+			if (Group == EnumUpgradesGroup.Galaxy2) {p = factors.Galaxy2StartPopulation;c = factors.Galaxy2ConquerorCount;}
+			if (Group == EnumUpgradesGroup.Galaxy3) {p = factors.Galaxy3StartPopulation;c = factors.Galaxy3ConquerorCount;}
+			if (Group == EnumUpgradesGroup.Galaxy4) {p = factors.Galaxy4StartPopulation;c = factors.Galaxy4ConquerorCount;}
+			p = p.CopyThis();// чистое население
+			var p1 = p.CopyThis();
+			p1.MulValue((1+c));// добавляем добавку в зависимости от количества захватов
+			_population = p1;
+			_captured = Army.IsBiggerThen(_population);
+
+			// ** IncomeMoney
+			var m1 = 1;// удваивает доход если галактика захвачена
+			if (_captured){m1++;}
+			var im = new MegaInt(0, 0);
+			if (Army.IsBigger0()){// узнаем показатели для армии
+				var a = Army.CopyThis();
+				a.MulValue(m);
+				if (_captured)a.MulValue(m);// если захвачено доход увеличиваем ещё в 2 раза
+				im.AddValue(a);
+			}
+			im.MulValue(m1);
+			IncomeMoney = im;
+
+			// ** цена клика
+			var c1 = new MegaInt(0, 1);// по умолчанию доход 1
+			var c2 = im.CopyThis();
+			c2.DivValue(100);
+			//c2.MulValue();// модификатор сколько получаем от IncomeMoney
+			c1.AddValue(c2);
+			c1.MulValue(factors.Galaxy1ClickCostMultiplier);
+			ClickCost = c1;
+			
+			// ** скорость 
+			TimeDelay = t;
+			var td = factors.Galaxy1TimeDelayMultiplier;
+			if (td > 0) TimeDelay /= td;
+
+			// ** Герои
+			ArmyHeroes = new MegaInt(0, 0);
+			if (_captured && factors.Galaxy1ConquerorCount > 0){// если галактика захвачена и ранее была захвачена уже
+				var a1 = Army.CopyThis();
+				a1.DivValue(1000000);// 1 из миллиона может стать героем
+				if (a1.IsBigger0()){
+					ArmyHeroes = a1.CopyThis();// вычисляем количество героев
+					var a = ArmyHeroes.CopyThis();
+					a.MulValue(1000);
+					IncomeMoney.AddValue(a);
+				}
+			}
+
 		}
 
 	}

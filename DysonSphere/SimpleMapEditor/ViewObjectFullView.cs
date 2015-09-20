@@ -88,7 +88,7 @@ namespace SimpleMapEditor
 			}
 		}
 
-		protected override void DrawObject(VisualizationProvider visualizationProvider)
+		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
 			visualizationProvider.SetColor(Color.CornflowerBlue);
 			visualizationProvider.Circle(cPoint.X, cPoint.Y, 40);

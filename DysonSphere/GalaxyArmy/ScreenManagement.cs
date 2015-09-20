@@ -16,7 +16,7 @@ namespace GalaxyArmy
 		protected override void InitObject(VisualizationProvider visualizationProvider)
 		{
 			base.InitObject(visualizationProvider);
-			var tp1 = new TrainProgress1(Controller, Gam, Gam.Armies[0]);
+			var tp1 = new TrainingProgress1(Controller, Gam, Gam.Armies[0]);
 			tp1.SetParams(150, 100, 600, 100, "Тренировка пехоты");
 			AddControl(tp1);
 		}

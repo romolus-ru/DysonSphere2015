@@ -43,7 +43,7 @@ namespace Engine.Views.Templates
 			visualizationProvider.Box(HeaderX, HeaderY, HeaderWidth, HeaderHeight);
 		}
 
-		protected override void DrawObject(VisualizationProvider vp)
+		public override void DrawObject(VisualizationProvider vp)
 		{
 			vp.SetColor(Color.FloralWhite, 100);
 			var x = X;

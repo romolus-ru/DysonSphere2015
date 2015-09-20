@@ -60,7 +60,7 @@ namespace Engine.Views.Templates
 			return ret;
 		}
 
-		protected override void DrawObject(VisualizationProvider vp)
+		public override void DrawObject(VisualizationProvider vp)
 		{
 			base.DrawObject(vp);
 			if (DragStarted){

@@ -1,24 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using Engine;
+﻿using Engine;
 using Engine.Controllers;
-using Engine.Views;
 using GalaxyArmy.Model;
 
 namespace GalaxyArmy
 {
+	/// <summary>
+	/// Покупка дополнительных тренировочных баз
+	/// </summary>
 	class ScreenTraining:ScreenBase
 	{
 		public ScreenTraining(Controller controller, string caption, GalaxyArmyModel gam)
 			: base(controller, caption,gam)
 		{}
 
-		protected override void DrawObject(VisualizationProvider visualizationProvider)
+		protected override void InitObject(VisualizationProvider visualizationProvider)
 		{
-			base.DrawObject(visualizationProvider);
+			base.InitObject(visualizationProvider);
+			var tp1 = new TrainingProgressBuy(Controller, Gam, Gam.Armies[0]);
+			tp1.SetParams(150, 100, 600, 100, "Тренировка пехоты");
+			AddControl(tp1);
 		}
+
 	}
 }

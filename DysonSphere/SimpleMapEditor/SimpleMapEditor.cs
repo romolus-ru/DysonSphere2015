@@ -133,10 +133,10 @@ namespace SimpleMapEditor
 		{
 			currLayer++;
 			if (currLayer > 4) currLayer = 0;
-			if (currLayer == 0) { _editor.SetActiveLayer("objects"); l1.SynhronizeMapCoords(l4.MapX, l4.MapY); Msg("Режим : Основной"); }
-			if (currLayer == 1) { _editor.SetActiveLayer("objectsView"); l2.SynhronizeMapCoords(l1.MapX, l1.MapY); Msg("Режим : установка дополнительных текстур"); }
-			if (currLayer == 2) { _editor.SetActiveLayer("objectsMove"); l3.SynhronizeMapCoords(l2.MapX, l2.MapY); Msg("Режим : редактирование перемещения"); }
-			if (currLayer == 3) { _editor.SetActiveLayer("objectsTeleport"); l4.SynhronizeMapCoords(l3.MapX, l3.MapY); Msg("Режим : редактирование телепортов"); }
+			if (currLayer == 0) { _editor.SetActiveLayer("objects"); Msg("Режим : Основной"); }
+			if (currLayer == 1) { _editor.SetActiveLayer("objectsView"); Msg("Режим : установка дополнительных текстур"); }
+			if (currLayer == 2) { _editor.SetActiveLayer("objectsMove"); Msg("Режим : редактирование перемещения"); }
+			if (currLayer == 3) { _editor.SetActiveLayer("objectsTeleport"); Msg("Режим : редактирование телепортов"); }
 			if (currLayer == 4) { _editor.SetActiveLayer("Map"); Msg("Режим : карта"); }
 		}
 
