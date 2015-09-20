@@ -43,6 +43,12 @@
     <Hint>ZChatTest.dll</Hint>
   </SettingsRow>
   <SettingsRow>
+    <Section>assembly</Section>
+    <Name>ZEditorExample.dll</Name>
+    <Value />
+    <Hint>ZEditorExample.dll</Hint>
+  </SettingsRow>
+  <SettingsRow>
     <Section>Default</Section>
     <Name>address</Name>
     <Value>127.0.0.1</Value>
@@ -57,7 +63,7 @@
   <SettingsRow>
     <Section>Default</Section>
     <Name>Module</Name>
-    <Value>GalaxyArmy.GalaxyArmy</Value>
+    <Value>ZEditorExample.EditorExample01</Value>
     <Hint />
   </SettingsRow>
   <SettingsRow>
